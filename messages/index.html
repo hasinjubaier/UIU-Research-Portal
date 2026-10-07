@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Messages — UIU Research Portal</title>
+<link rel="stylesheet" href="../assets/css/global.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<style>
+.messages-layout { display:grid;grid-template-columns:300px 1fr;gap:0;height:calc(100vh - var(--topbar-h) - 64px);max-height:700px;background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-xl);overflow:hidden; }
+@media(max-width:900px){.messages-layout{grid-template-columns:1fr;} .chat-area{display:none;}.chat-area.show{display:flex;}}
+
+.convo-list { border-right:1px solid var(--border-card);display:flex;flex-direction:column;overflow:hidden; }
+.convo-list-header { padding:var(--space-4);border-bottom:1px solid var(--border-card);display:flex;align-items:center;justify-content:space-between; }
+.convo-list-search { padding:var(--space-3);border-bottom:1px solid var(--border-card); }
+.convo-list-items { flex:1;overflow-y:auto; }
+.convo-item { display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4);cursor:pointer;transition:background var(--dur-fast);border-bottom:1px solid var(--border-card); }
+.convo-item:hover { background:var(--bg-card-hover); }
+.convo-item.active { background:var(--accent-glow); }
+.convo-item-info { flex:1;min-width:0; }
+.convo-item-name { font-weight:600;font-size:.9rem; }
+.convo-item-last { font-size:.75rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px; }
+.unread-badge { background:var(--accent);color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:var(--radius-full); }
+
+.chat-area { display:flex;flex-direction:column;overflow:hidden; }
+.chat-area-header { padding:var(--space-4);border-bottom:1px solid var(--border-card);display:flex;align-items:center;gap:var(--space-3); }
+.chat-area-messages { flex:1;overflow-y:auto;padding:var(--space-5);display:flex;flex-direction:column;gap:var(--space-4); }
+.chat-area-input { padding:var(--space-4);border-top:1px solid var(--border-card);display:flex;gap:var(--space-3);align-items:center; }
+.chat-area-input input { flex:1;background:var(--bg-input);border:1px solid var(--border-card);border-radius:var(--radius-full);padding:10px 18px;color:var(--text-primary);outline:none;font-size:.9rem;transition:border-color var(--dur-fast); }
+.chat-area-input input:focus { border-color:var(--accent); }
+.msg-group { display:flex;flex-direction:column;gap:4px; }
+.msg-group.sent { align-items:flex-end; }
+.msg-group.recv { align-items:flex-start; }
+.msg-sender { font-size:.72rem;color:var(--text-muted);padding:0 4px; }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="app-shell">
+  <div id="sidebarMount"></div>
+  <div class="main-content">
+    <div id="topbarMount"></div>
+    <div class="page-content page-enter" style="padding-bottom:0;">
+      <div class="page-header" style="margin-bottom:var(--space-5);">
+
+        <h2>Messages</h2>
+        <p>Direct messages and project group chats</p>
+      </div>
+
+      <div class="messages-layout">
+        <!-- Conversation list -->
+        <div class="convo-list">
+          <div class="convo-list-header">
+            <span style="font-weight:700;">Chats</span>
+            <button class="btn btn-ghost btn-sm btn-icon" onclick="Toast.show('New conversation — coming with backend!','info')"></button>
+          </div>
+          <div class="convo-list-search">
+            <div class="search-bar" style="padding:6px 12px;">
+              <span class="icon" style="font-size:.85rem;"></span>
+              <input type="text" placeholder="Search messages…">
+            </div>
+          </div>
+          <div class="convo-list-items" id="convoList"></div>
+        </div>
+
+        <!-- Chat area -->
+        <div class="chat-area" id="chatArea">
+          <div class="chat-area-header" id="chatHeader">
+            <div class="avatar-placeholder avatar-md accent" style="width:40px;height:40px;">AI</div>
+            <div>
+              <div style="font-weight:700;">AI Healthcare Team</div>
+              <div style="font-size:.75rem;color:var(--text-muted);">3 members · 2 online</div>
+            </div>
+            <div style="margin-left:auto;display:flex;gap:var(--space-2);">
+              <button class="btn btn-ghost btn-sm btn-icon" onclick="Toast.show('Video call — WebRTC integration planned for backend phase!','info')"></button>
+              <button class="btn btn-ghost btn-sm btn-icon" onclick="Toast.show('More options','info')">⋮</button>
+            </div>
+          </div>
+          <div class="chat-area-messages" id="chatAreaMessages"></div>
+          <div class="chat-area-input">
+            <button class="btn btn-ghost btn-sm btn-icon" onclick="Toast.show('File sharing — backend phase!','info')"></button>
+            <input id="mainChatInput" placeholder="Type a message…" onkeydown="if(event.key==='Enter') sendMainMsg()">
+            <button class="btn btn-primary btn-sm btn-icon" onclick="sendMainMsg()"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast-container"></div>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+document.getElementById('sidebarMount').outerHTML = buildSidebar('messages');
+document.getElementById('topbarMount').outerHTML  = buildTopbar('Messages','messages');
+
+// Build conversation list
+const convoList = document.getElementById('convoList');
+DATA.conversations.forEach((c,i)=>{
+  const other = c.type==='dm' ? DATA.getStudent(c.with) : null;
+  const name = c.type==='group' ? c.name : other?.name || 'Unknown';
+  const initials = c.type==='group' ? name.split(' ').map(w=>w[0]).join('').slice(0,2) : other?.initials || 'UK';
+  const color = c.type==='group' ? 'accent' : (other?.color || 'purple');
+  convoList.innerHTML+=`
+  <div class="convo-item ${i===0?'active':''}" onclick="loadChat(${c.id},this)">
+    <div class="avatar-placeholder avatar-sm ${color}" style="width:40px;height:40px;position:relative;">
+      ${initials}
+      ${c.type==='dm'&&other?.status==='online'?'<div class="online-dot" style="position:absolute;bottom:0;right:0;width:10px;height:10px;border:2px solid var(--bg-card);"></div>':''}
+    </div>
+    <div class="convo-item-info">
+      <div class="convo-item-name">${name}</div>
+      <div class="convo-item-last">${c.lastMessage}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+      <div style="font-size:.65rem;color:var(--text-muted);">${c.time}</div>
+      ${c.unread?`<div class="unread-badge">${c.unread}</div>`:''}
+    </div>
+  </div>`;
+});
+
+// Sample chat messages
+const sampleMessages = [
+  {sender:'Rakibul Islam',initials:'RI',text:'Hey team! The baseline model is at 78% accuracy ',time:'2:28 PM',sent:false},
+  {sender:'Maliha Rahman',initials:'MR',text:'Wow nice! What optimizer did you use?',time:'2:29 PM',sent:false},
+  {sender:'You',initials:'RA',text:"That's amazing Rakibul! Let's try data augmentation next.",time:'2:30 PM',sent:true},
+  {sender:'Rakibul Islam',initials:'RI',text:'Adam with lr=0.001. I think augmentation will push it to 85%+',time:'2:31 PM',sent:false},
+  {sender:'You',initials:'RA',text:'Agreed! Also, Maliha can you check if the NIH dataset is properly split?',time:'2:33 PM',sent:true},
+  {sender:'Maliha Rahman',initials:'MR',text:'On it! Will push the split script to the repo in 30 mins ',time:'2:34 PM',sent:false},
+];
+
+const msgArea = document.getElementById('chatAreaMessages');
+sampleMessages.forEach(m=>{
+  msgArea.innerHTML+=`
+  <div class="msg-group ${m.sent?'sent':'recv'}">
+    ${!m.sent?`<div class="msg-sender">${m.sender}</div>`:''}
+    <div class="chat-bubble ${m.sent?'sent':'received'}">${m.text}</div>
+    <div class="chat-time">${m.time}</div>
+  </div>`;
+});
+msgArea.scrollTop=msgArea.scrollHeight;
+
+function sendMainMsg(){
+  const inp=document.getElementById('mainChatInput');
+  if(!inp.value.trim()) return;
+  msgArea.innerHTML+=`<div class="msg-group sent"><div class="chat-bubble sent">${inp.value}</div><div class="chat-time">Just now</div></div>`;
+  inp.value='';
+  msgArea.scrollTop=msgArea.scrollHeight;
+}
+
+function loadChat(id, el){
+  document.querySelectorAll('.convo-item').forEach(ci=>ci.classList.remove('active'));
+  el.classList.add('active');
+  Toast.show('Loading conversation…','info');
+}
+</script>
+</body>
+</html>

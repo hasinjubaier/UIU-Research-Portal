@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reputation & Leaderboard — UIU Research Portal</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="../assets/css/global.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<style>
+.leaderboard-item { display:flex;align-items:center;gap:var(--space-4);padding:var(--space-4);border-radius:var(--radius-lg);transition:all var(--dur-fast);border:1px solid transparent;cursor:pointer; }
+.leaderboard-item:hover { background:var(--bg-card-hover);border-color:var(--border-card); }
+.leaderboard-item.me { background:var(--accent-glow);border-color:var(--border-hover); }
+.rank-badge { width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:.9rem;flex-shrink:0; }
+.rank-1 { background:linear-gradient(135deg,#FFD700,#FFA500);color:#000; }
+.rank-2 { background:linear-gradient(135deg,#C0C0C0,#A8A8A8);color:#000; }
+.rank-3 { background:linear-gradient(135deg,#CD7F32,#A0522D);color:#fff; }
+.rank-other { background:var(--bg-surface);border:1px solid var(--border-card);color:var(--text-muted); }
+.change-up   { color:var(--green);font-size:.8rem; }
+.change-down { color:var(--red);font-size:.8rem; }
+.change-same { color:var(--text-muted);font-size:.8rem; }
+.pts-history-item { display:flex;align-items:center;justify-content:space-between;padding:var(--space-3);border-radius:var(--radius-md);border:1px solid var(--border-card);margin-bottom:var(--space-2);transition:background var(--dur-fast); }
+.pts-history-item:hover { background:var(--bg-card-hover); }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="app-shell">
+  <div id="sidebarMount"></div>
+  <div class="main-content">
+    <div id="topbarMount"></div>
+    <div class="page-content page-enter">
+
+      <div class="page-header">
+        <h2>Reputation & Leaderboard</h2>
+        <p>Earn points, climb the rankings, and unlock achievement badges</p>
+      </div>
+
+      <!-- My rep card -->
+      <div class="card mb-8" style="background:linear-gradient(135deg,var(--primary) 0%,#1a2080 40%,#2d1b69 100%);border-color:rgba(79,142,247,.3);position:relative;overflow:hidden;">
+        <div class="hero-bg-orb blue" style="opacity:.3;width:300px;height:300px;top:-100px;right:-60px;"></div>
+        <div style="position:relative;z-index:1;display:flex;align-items:center;gap:var(--space-8);flex-wrap:wrap;">
+          <div style="text-align:center;">
+            <div style="font-size:3rem;font-weight:800;font-family:'Space Grotesk',sans-serif;background:linear-gradient(135deg,#FFD700,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">#4</div>
+            <div style="color:rgba(255,255,255,.6);font-size:.8rem;">Your Rank</div>
+          </div>
+          <div>
+            <div class="avatar-placeholder" style="width:64px;height:64px;font-size:1.5rem;font-weight:800;border-radius:50%;background:rgba(79,142,247,.3);color:#fff;border:3px solid rgba(79,142,247,.4);">RA</div>
+          </div>
+          <div style="flex:1;">
+            <div style="color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;margin-bottom:4px;">Rafsan Ahmed</div>
+            <div style="color:rgba(255,255,255,.6);font-size:.875rem;margin-bottom:var(--space-4);">CSE · 3rd Year ·  Active Researcher</div>
+            <div style="display:flex;gap:var(--space-6);flex-wrap:wrap;">
+              <div><div style="color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:2rem;">2,840</div><div style="color:rgba(255,255,255,.5);font-size:.75rem;">Total Points</div></div>
+              <div><div style="color:#fff;font-weight:700;font-size:1.3rem;">92</div><div style="color:rgba(255,255,255,.5);font-size:.75rem;">This Week</div></div>
+              <div><div style="color:#fff;font-weight:700;font-size:1.3rem;">Top 5%</div><div style="color:rgba(255,255,255,.5);font-size:.75rem;">Department</div></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:var(--space-3);">
+            <span class="badge" style="background:rgba(255,215,0,.2);color:#FFD700;border:1px solid rgba(255,215,0,.3);"> Active Researcher</span>
+            <span class="badge" style="background:rgba(255,165,0,.2);color:var(--orange);border:1px solid rgba(255,165,0,.3);"> Top Contributor</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 380px;gap:var(--space-6);">
+        <!-- Leaderboard -->
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"> Global Leaderboard</div>
+              <div class="tabs" style="height:fit-content;" data-tabs>
+                <div class="tab-item active">Global</div>
+                <div class="tab-item">CSE Dept</div>
+                <div class="tab-item">This Week</div>
+              </div>
+            </div>
+            <!-- Podium -->
+            <div style="display:flex;justify-content:center;align-items:flex-end;gap:var(--space-4);margin:var(--space-6) 0;padding:var(--space-4);" id="podium"></div>
+            <!-- Full list -->
+            <div id="leaderboardList"></div>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div style="display:flex;flex-direction:column;gap:var(--space-5);">
+          <!-- Points chart -->
+          <div class="card">
+            <div class="card-title mb-4"> Points Over Time</div>
+            <canvas id="pointsChart" height="180"></canvas>
+          </div>
+
+          <!-- Points history -->
+          <div class="card">
+            <div class="card-title mb-4"> Points History</div>
+            <div id="pointsHistory"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="toast-container"></div>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+document.getElementById('sidebarMount').outerHTML = buildSidebar('reputation');
+document.getElementById('topbarMount').outerHTML  = buildTopbar('Reputation','reputation');
+
+// Podium (top 3)
+// Podium (top 3)
+const podium = document.getElementById('podium');
+const top3 = DATA.leaderboard.slice(0,3);
+const order = [top3[1], top3[0], top3[2]]; // 2nd, 1st, 3rd
+const heights = ['120px','160px','100px'];
+const medals = [
+  `<span style="font-size:.85rem;font-weight:700;color:#FFFFFF;font-family:'Space Grotesk',sans-serif;">2nd</span>`,
+  `<span style="font-size:1rem;font-weight:800;color:#FCD34D;font-family:'Space Grotesk',sans-serif;">1st</span>`,
+  `<span style="font-size:.8rem;font-weight:700;color:#FFFFFF;font-family:'Space Grotesk',sans-serif;">3rd</span>`
+];
+order.forEach((entry, idx)=>{
+  const s = DATA.getStudent(entry.student);
+  podium.innerHTML+=`
+  <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:var(--space-2);">
+    <div class="avatar-placeholder" style="width:${idx===1?56:44}px;height:${idx===1?56:44}px;font-size:${idx===1?1.1:.9}rem;border-radius:50%;background:var(--accent-glow);color:var(--accent);border:2px solid var(--accent);">${s.initials}</div>
+    <div style="font-size:.8rem;font-weight:600;">${s.name.split(' ')[0]}</div>
+    <div style="font-size:.7rem;color:var(--text-muted);">${entry.points.toLocaleString()} pts</div>
+    <div style="width:70px;height:${heights[idx]};background:${idx===1?'linear-gradient(to top,var(--accent),var(--purple))':idx===0?'linear-gradient(to top,var(--text-muted),#888)':'linear-gradient(to top,#B45309,var(--primary))'};border-radius:8px 8px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:8px;font-size:1.4rem;">${medals[idx]}</div>
+  </div>`;
+});
+
+// Full leaderboard
+const lb = document.getElementById('leaderboardList');
+DATA.leaderboard.forEach(entry=>{
+  const s = DATA.getStudent(entry.student);
+  const isMe = entry.student===1;
+  const rankClass = entry.rank===1?'rank-1':entry.rank===2?'rank-2':entry.rank===3?'rank-3':'rank-other';
+  const changeIcon = entry.change==='up'?'':entry.change==='down'?'':'–';
+  const changeClass = entry.change==='up'?'change-up':entry.change==='down'?'change-down':'change-same';
+  lb.innerHTML+=`
+  <div class="leaderboard-item ${isMe?'me':''}">
+    <div class="rank-badge ${rankClass}">${entry.rank}</div>
+    <div class="avatar-placeholder avatar-sm ${s.color||'accent'}" style="width:36px;height:36px;">${s.initials}</div>
+    <div style="flex:1;">
+      <div style="font-weight:600;font-size:.9rem;">${s.name} ${isMe?'<span class="badge badge-accent" style="font-size:.65rem;">You</span>':''}</div>
+      <div style="font-size:.75rem;color:var(--text-muted);">${s.department}</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;">${entry.points.toLocaleString()}</div>
+      <div class="${changeClass}">${changeIcon}</div>
+    </div>
+  </div>`;
+});
+
+// Points chart
+new Chart(document.getElementById('pointsChart'), {
+  type:'line',
+  data:{
+    labels:['Jan','Feb','Mar','Apr','May'],
+    datasets:[{label:'Points',data:[800,1200,1800,2400,2840],borderColor:'var(--accent)',backgroundColor:'rgba(79,142,247,.1)',fill:true,tension:.4,borderWidth:2.5,pointBackgroundColor:'var(--accent)',pointRadius:5}]
+  },
+  options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8B96B5'}},x:{grid:{display:false},ticks:{color:'#8B96B5'}}}}
+});
+
+// Points history
+const ph = document.getElementById('pointsHistory');
+DATA.reputationPoints.forEach(p=>{
+  ph.innerHTML+=`<div class="pts-history-item"><div><div style="font-size:.875rem;font-weight:500;">${p.action}</div><div style="font-size:.72rem;color:var(--text-muted);">${p.date}</div></div><div class="badge badge-green">+${p.points} pts</div></div>`;
+});
+</script>
+</body>
+</html>

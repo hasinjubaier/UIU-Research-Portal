@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dataset Hub — UIU Research Portal</title>
+<link rel="stylesheet" href="../assets/css/global.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<style>
+.dataset-card { background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-xl);padding:var(--space-6);transition:all var(--dur-mid);display:flex;flex-direction:column;gap:var(--space-4); }
+.dataset-card:hover { border-color:var(--border-hover);box-shadow:var(--shadow-accent);transform:translateY(-3px); }
+.type-icon { width:48px;height:48px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0; }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="app-shell">
+  <div id="sidebarMount"></div>
+  <div class="main-content">
+    <div id="topbarMount"></div>
+    <div class="page-content page-enter">
+      <div class="page-header">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);">
+          <div>
+            <h2>Dataset & Experiment Hub</h2>
+            <p>Share datasets, code, and experiment results — like a mini research GitHub</p>
+          </div>
+          <button class="btn btn-primary" data-modal-open="uploadDataModal">Upload Dataset</button>
+        </div>
+      </div>
+
+      <div class="stats-row mb-8">
+        <div class="stat-card">
+          <div class="stat-card-icon accent">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="180">0</div>
+          <div class="stat-label">Datasets</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="12">0</div>
+          <div class="stat-label">Total GB Stored</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="5200">0</div>
+          <div class="stat-label">Downloads</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="340">0</div>
+          <div class="stat-label">Stars Given</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:var(--space-4);margin-bottom:var(--space-6);flex-wrap:wrap;">
+        <div class="search-bar" style="flex:1;max-width:480px;"><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><input type="text" placeholder="Search datasets, code, experiments…" id="dataSearch"></div>
+        <select class="form-input" style="width:auto;"><option>All Types</option><option>Dataset</option><option>Code</option><option>Experiment</option></select>
+      </div>
+
+      <div class="grid-2" id="dataGrid"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="uploadDataModal">
+  <div class="modal modal-lg">
+    <div class="modal-header"><div class="modal-title">Upload to Dataset Hub</div><span class="modal-close" data-modal-close="uploadDataModal">&times;</span></div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-5);">
+      <div class="upload-zone" onclick="Toast.show('File upload — ready for backend!','info')"><div class="upload-icon" style="display:flex;align-items:center;justify-content:center;margin-bottom:var(--space-3);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" width="36" height="36" style="opacity:0.85;"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg></div><div style="font-weight:600;margin-bottom:4px;">Drop files or click to upload</div><div style="font-size:.8rem;color:var(--text-muted);">CSV, JSON, ZIP, .ipynb, .py — Max 500MB</div></div>
+      <div class="form-group"><label class="form-label">Dataset Title</label><input class="form-input" placeholder="Descriptive title"></div>
+      <div class="form-group"><label class="form-label">Description / README</label><textarea class="form-input" placeholder="Describe the dataset, methodology, and usage…" style="min-height:100px;"></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);">
+        <div class="form-group"><label class="form-label">Type</label><select class="form-input"><option>Dataset</option><option>Code</option><option>Experiment Results</option></select></div>
+        <div class="form-group"><label class="form-label">License</label><select class="form-input"><option>CC BY 4.0</option><option>MIT</option><option>CC BY-SA 4.0</option><option>Research Only</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Tags</label><input class="form-input" placeholder="e.g. Python, CSV, Healthcare"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-modal-close="uploadDataModal">Cancel</button>
+      <button class="btn btn-primary" onclick="Modal.close('uploadDataModal');Toast.show('Dataset uploaded to hub! ','success')">Upload</button>
+    </div>
+  </div>
+</div>
+<div class="toast-container"></div>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+document.getElementById('sidebarMount').outerHTML = buildSidebar('datasets');
+document.getElementById('topbarMount').outerHTML  = buildTopbar('Dataset Hub','datasets');
+
+const typeIcons2 = {
+  Dataset: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="18" height="18"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
+  Code: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="18" height="18"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`,
+  Experiment: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="18" height="18"><path d="M9 3h6M10 3v6l-4 10a1 1 0 0 0 .9 1.4h10.2A1 1 0 0 0 18 19L14 9V3"/><path d="M7.5 14h9"/></svg>`
+};
+const typeColors2 = { Dataset:'accent', Code:'purple', Experiment:'teal' };
+
+function renderDatasets(list) {
+  const grid = document.getElementById('dataGrid');
+  grid.innerHTML='';
+  list.forEach((d,i)=>{
+    grid.innerHTML+=`
+    <div class="dataset-card reveal delay-${i%3}">
+      <div style="display:flex;align-items:flex-start;gap:var(--space-4);">
+        <div class="type-icon" style="background:var(--${typeColors2[d.type]||'accent'}-glow,rgba(79,142,247,.1)); color:var(--${typeColors2[d.type]||'accent'});">${typeIcons2[d.type]||''}</div>
+        <div style="flex:1;">
+          <span class="badge badge-${typeColors2[d.type]||'accent'} mb-2">${d.type}</span>
+          <div style="font-weight:700;font-size:1rem;margin-bottom:2px;">${d.title}</div>
+          <div style="font-size:.75rem;color:var(--text-muted);">By ${d.author} · ${d.version} · ${d.size}</div>
+        </div>
+      </div>
+      <p style="font-size:.85rem;color:var(--text-secondary);line-height:1.6;">${d.description}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">${d.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:.8rem;color:var(--text-muted);">
+        <span>${d.downloads} downloads · ${d.stars} stars</span>
+        <span class="badge badge-muted">${d.license}</span>
+      </div>
+      <div style="display:flex;gap:var(--space-2);">
+        <button class="btn btn-primary btn-sm" style="flex:1;" onclick="Toast.show('Downloading ${d.title}…','info')"> Download</button>
+        <button class="btn btn-ghost btn-sm" onclick="Toast.show('Forked to your workspace!','success')"> Fork</button>
+        <button class="btn btn-ghost btn-sm btn-icon" onclick="Toast.show('Starred!','success')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
+      </div>
+    </div>`;
+  });
+  ScrollReveal.init();
+}
+renderDatasets(DATA.datasets);
+document.getElementById('dataSearch').addEventListener('input',function(){
+  const q=this.value.toLowerCase();
+  renderDatasets(DATA.datasets.filter(d=>d.title.toLowerCase().includes(q)||d.tags.some(t=>t.toLowerCase().includes(q))));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account — UIU Research Portal</title>
+<link rel="stylesheet" href="../assets/css/global.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<style>
+.auth-page { min-height:100vh; display:flex; }
+.auth-left {
+  flex:1; background:linear-gradient(135deg,#1a2080 0%,var(--purple) 60%,#0d4a6b 100%);
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:var(--space-12); position:relative; overflow:hidden;
+}
+@media(max-width:900px){.auth-left{display:none;}}
+.auth-left-content { position:relative;z-index:1;max-width:420px; }
+.auth-left h2 { color:#fff;font-size:2.2rem;margin-bottom:var(--space-4); }
+.auth-left p  { color:rgba(255,255,255,.7);line-height:1.7; }
+.badge-showcase { display:flex;flex-wrap:wrap;gap:var(--space-3);margin-top:var(--space-8); }
+.badge-pill { background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:var(--radius-full);padding:8px 16px;color:rgba(255,255,255,.9);font-size:.8rem;font-weight:500;display:flex;align-items:center;gap:6px; }
+.stat-preview { display:flex;gap:var(--space-6);margin-top:var(--space-8); }
+.stat-preview-item { color:rgba(255,255,255,.9); }
+.stat-preview-num { font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:800; }
+.stat-preview-lbl { font-size:.75rem;color:rgba(255,255,255,.5); }
+
+.auth-right {
+  width:520px;min-height:100vh;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:var(--space-10) var(--space-10);background:var(--bg-base);overflow-y:auto;
+}
+@media(max-width:900px){.auth-right{width:100%;padding:var(--space-8) var(--space-6);}}
+.auth-logo { display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-8);font-family:'Space Grotesk',sans-serif;font-weight:700; }
+.auth-logo-icon { width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center; }
+
+/* Step wizard */
+.wizard-steps { display:flex;align-items:center;gap:var(--space-2);margin-bottom:var(--space-8); }
+.wizard-step { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;border:2px solid var(--border-card);color:var(--text-muted);transition:all var(--dur-mid); }
+.wizard-step.active { background:var(--accent);border-color:var(--accent);color:#fff; }
+.wizard-step.done   { background:var(--green);border-color:var(--green);color:#fff; }
+.wizard-line { flex:1;height:2px;background:var(--border-card); }
+.wizard-label { display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-muted);margin-bottom:var(--space-2); }
+
+.step-panel { display:none; }
+.step-panel.active { display:flex; flex-direction:column; gap:var(--space-5); }
+
+/* Skills tag input */
+.skills-input-area {
+  background:var(--bg-input);border:1px solid var(--border-card);border-radius:var(--radius-md);
+  padding:10px 14px;display:flex;flex-wrap:wrap;gap:6px;min-height:50px;cursor:text;
+  transition:border-color var(--dur-fast);
+}
+.skills-input-area:focus-within { border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow); }
+.skills-input-area input { border:none;background:none;outline:none;color:var(--text-primary);font-size:.875rem;flex:1;min-width:120px; }
+.skill-tag { display:inline-flex;align-items:center;gap:4px;background:var(--accent-glow);color:var(--accent);border:1px solid rgba(79,142,247,.3);border-radius:var(--radius-full);padding:3px 10px;font-size:.75rem;font-weight:600; }
+.skill-tag button { background:none;border:none;color:var(--accent);cursor:pointer;font-size:1rem;line-height:1;padding:0; }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="auth-page">
+  <!-- Left -->
+  <div class="auth-left">
+    <div class="hero-bg-orb blue"></div>
+    <div class="hero-bg-orb purple"></div>
+    <div class="auth-left-content">
+      <div class="section-label" style="color:rgba(255,255,255,.6);">Join the Community</div>
+      <h2>Start Your Research<br>Journey Today </h2>
+      <p>Join 1,200+ UIU students who are already collaborating on cutting-edge research projects.</p>
+      <div class="badge-showcase">
+        <div class="badge-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12" style="stroke: var(--accent);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Active Researcher
+        </div>
+        <div class="badge-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12" style="stroke: #FFD700;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Top Contributor
+        </div>
+        <div class="badge-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12" style="stroke: #5B21B6;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Knowledge Sharer
+        </div>
+        <div class="badge-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12" style="stroke: #F59E0B;"><path d="M9 21h6"/><path d="M9 17h6"/><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/></svg>
+          Idea Innovator
+        </div>
+        <div class="badge-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12" style="stroke: #10B981;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Team Player
+        </div>
+        <div class="badge-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12" style="stroke: #3B82F6;"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+          Research Pioneer
+        </div>
+      </div>
+      <div class="stat-preview">
+        <div class="stat-preview-item"><div class="stat-preview-num">340+</div><div class="stat-preview-lbl">Active Projects</div></div>
+        <div class="stat-preview-item"><div class="stat-preview-num">850+</div><div class="stat-preview-lbl">Resources</div></div>
+        <div class="stat-preview-item"><div class="stat-preview-num">120+</div><div class="stat-preview-lbl">Ideas Posted</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right -->
+  <div class="auth-right">
+    <div class="auth-logo">
+      <div class="auth-logo-icon" style="color:#fff;">R</div>
+      <span>UIU Research Portal</span>
+      <button class="btn btn-ghost btn-sm" onclick="ThemeManager.toggle()" style="margin-left:auto;"><span data-theme-icon></span></button>
+    </div>
+
+    <h2 style="margin-bottom:var(--space-2);">Create your account</h2>
+    <p style="margin-bottom:var(--space-6);color:var(--text-secondary);">Complete 3 quick steps to get started</p>
+
+    <!-- Wizard progress -->
+    <div>
+      <div class="wizard-label"><span>Account</span><span>Profile</span><span>Interests</span></div>
+      <div class="wizard-steps">
+        <div class="wizard-step active" id="ws1">1</div>
+        <div class="wizard-line"></div>
+        <div class="wizard-step" id="ws2">2</div>
+        <div class="wizard-line"></div>
+        <div class="wizard-step" id="ws3">3</div>
+      </div>
+    </div>
+
+    <form id="registerForm" onsubmit="handleRegister(event)">
+      <!-- Step 1: Account -->
+      <div class="step-panel active" id="step1">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" type="text" id="fullname" placeholder="Your full name" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">University Email</label>
+          <input class="form-input" type="email" id="regEmail" placeholder="yourname@uiu.ac.bd" required>
+          <span class="form-hint">Must use @uiu.ac.bd domain</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Student ID</label>
+          <input class="form-input" type="text" id="studentId" placeholder="e.g. 011221234" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" id="regPw" placeholder="Min 8 characters" required>
+        </div>
+        <button type="button" class="btn btn-primary btn-block" onclick="goStep(2)">Continue →</button>
+      </div>
+
+      <!-- Step 2: Profile -->
+      <div class="step-panel" id="step2">
+        <div class="form-group">
+          <label class="form-label">Department</label>
+          <select class="form-input" id="dept" style="background-color:var(--bg-input);color:var(--text-primary);">
+            <option value="" style="background:#131d35;color:#F0F4FF;">Select your department</option>
+            <option style="background:#131d35;color:#F0F4FF;">Computer Science &amp; Engineering</option>
+            <option style="background:#131d35;color:#F0F4FF;">Electrical &amp; Electronic Engineering</option>
+            <option style="background:#131d35;color:#F0F4FF;">Business Administration</option>
+            <option style="background:#131d35;color:#F0F4FF;">Mechanical Engineering</option>
+            <option style="background:#131d35;color:#F0F4FF;">Civil Engineering</option>
+            <option style="background:#131d35;color:#F0F4FF;">English</option>
+            <option style="background:#131d35;color:#F0F4FF;">Economics</option>
+            <option style="background:#131d35;color:#F0F4FF;">Life Sciences</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Academic Year</label>
+          <select class="form-input" id="year" style="background-color:var(--bg-input);color:var(--text-primary);">
+            <option value="" style="background:#131d35;color:#F0F4FF;">Select your year</option>
+            <option style="background:#131d35;color:#F0F4FF;">1st Year</option>
+            <option style="background:#131d35;color:#F0F4FF;">2nd Year</option>
+            <option style="background:#131d35;color:#F0F4FF;">3rd Year</option>
+            <option style="background:#131d35;color:#F0F4FF;">4th Year</option>
+            <option style="background:#131d35;color:#F0F4FF;">Graduate (Masters)</option>
+            <option style="background:#131d35;color:#F0F4FF;">Graduate (PhD)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Short Bio</label>
+          <textarea class="form-input" id="bio" placeholder="Tell others about yourself and your research goals…" style="min-height:80px;"></textarea>
+        </div>
+        <div style="display:flex;gap:var(--space-3);">
+          <button type="button" class="btn btn-ghost" onclick="goStep(1)" style="flex:0 0 auto;">← Back</button>
+          <button type="button" class="btn btn-primary btn-block" onclick="goStep(3)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Skills & Interests -->
+      <div class="step-panel" id="step3">
+        <div class="form-group">
+          <label class="form-label">Your Skills <span class="text-muted">(press Enter to add)</span></label>
+          <div class="skills-input-area" id="skillsArea" onclick="document.getElementById('skillInput').focus()">
+            <input type="text" id="skillInput" placeholder="e.g. Python, Machine Learning…" onkeydown="addSkill(event)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Research Interests</label>
+          <div class="skills-input-area" id="interestsArea" onclick="document.getElementById('interestInput').focus()">
+            <input type="text" id="interestInput" placeholder="e.g. AI in Healthcare, NLP…" onkeydown="addInterest(event)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">I am looking for…</label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;" id="lookingForBtns">
+            <button type="button" class="tag" onclick="this.classList.toggle('active')">Research Teammates</button>
+            <button type="button" class="tag" onclick="this.classList.toggle('active')">Project Ideas</button>
+            <button type="button" class="tag" onclick="this.classList.toggle('active')">Mentorship</button>
+            <button type="button" class="tag" onclick="this.classList.toggle('active')">Data & Resources</button>
+            <button type="button" class="tag" onclick="this.classList.toggle('active')">Co-authorship</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:var(--space-3);">
+          <button type="button" class="btn btn-ghost" onclick="goStep(2)" style="flex:0 0 auto;">← Back</button>
+          <button type="submit" class="btn btn-primary btn-block" id="submitBtn">Create Account</button>
+        </div>
+      </div>
+    </form>
+
+    <div style="text-align:center;margin-top:var(--space-6);font-size:.875rem;color:var(--text-secondary);">
+      Already have an account? <a href="login.html" style="color:var(--accent);font-weight:600;">Sign in →</a>
+    </div>
+    <div style="text-align:center;margin-top:var(--space-3);">
+      <a href="../index.html" style="font-size:.85rem;color:var(--text-muted);">← Back to Home</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+let skills = [], interests = [];
+const steps = [null, document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
+const wizSteps = [null, document.getElementById('ws1'), document.getElementById('ws2'), document.getElementById('ws3')];
+let current = 1;
+
+function goStep(n) {
+  if (n === 2) {
+    const email = document.getElementById('regEmail').value;
+    if (!email.endsWith('@uiu.ac.bd')) { Toast.show('Please use your @uiu.ac.bd email', 'error'); return; }
+  }
+  steps[current].classList.remove('active');
+  wizSteps[current].classList.remove('active');
+  wizSteps[current].classList.add('done');
+  wizSteps[current].textContent = '';
+  if (n > current) {
+    for(let i = 1; i < n; i++) { wizSteps[i].classList.add('done'); wizSteps[i].textContent=''; }
+  }
+  current = n;
+  steps[current].classList.add('active');
+  wizSteps[current].classList.remove('done');
+  wizSteps[current].classList.add('active');
+  wizSteps[current].textContent = n;
+}
+
+function addTag(container, arr, val) {
+  if (!val.trim() || arr.includes(val.trim())) return;
+  arr.push(val.trim());
+  const tag = document.createElement('span');
+  tag.className = 'skill-tag';
+  tag.innerHTML = `${val.trim()} <button type="button" onclick="removeTag('${val.trim()}',this,'${container}')">×</button>`;
+  document.getElementById(container).insertBefore(tag, document.getElementById(container).lastElementChild);
+}
+function removeTag(val, btn, areaId) {
+  btn.parentElement.remove();
+  if (areaId === 'skillsArea') skills = skills.filter(s=>s!==val);
+  else interests = interests.filter(s=>s!==val);
+}
+function addSkill(e)   { if(e.key==='Enter'||e.key===','){ e.preventDefault(); addTag('skillsArea', skills, e.target.value); e.target.value=''; } }
+function addInterest(e){ if(e.key==='Enter'||e.key===','){ e.preventDefault(); addTag('interestsArea', interests, e.target.value); e.target.value=''; } }
+
+function handleRegister(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  btn.innerHTML = '<span class="spinner"></span> Creating account…';
+  btn.disabled = true;
+  setTimeout(() => {
+    Toast.show('Account created! Welcome to UIU Research Portal ', 'success');
+    setTimeout(() => { window.location.href = '../dashboard/index.html'; }, 1200);
+  }, 1500);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Collaborators — UIU Research Portal</title>
+<link rel="stylesheet" href="../assets/css/global.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<style>
+.collab-layout { display:grid;grid-template-columns:280px 1fr;gap:var(--space-6); }
+@media(max-width:960px){.collab-layout{grid-template-columns:1fr;}}
+.filter-panel { background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-lg);padding:var(--space-5);height:fit-content;position:sticky;top:calc(var(--topbar-h) + var(--space-6)); }
+.filter-title { font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:var(--space-5);display:flex;align-items:center;gap:var(--space-2); }
+.filter-section { margin-bottom:var(--space-5); }
+.filter-section-label { font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:var(--space-3); }
+.filter-option { display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) 0;cursor:pointer;font-size:.875rem;color:var(--text-secondary);transition:color var(--dur-fast); }
+.filter-option:hover { color:var(--text-primary); }
+.filter-option input[type=checkbox] { accent-color:var(--accent);width:15px;height:15px; }
+
+.collab-card {
+  background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-xl);
+  padding:var(--space-6);transition:all var(--dur-mid) var(--ease);
+}
+.collab-card:hover { border-color:var(--border-hover);box-shadow:var(--shadow-accent);transform:translateY(-3px); }
+.collab-card-header { display:flex;align-items:flex-start;gap:var(--space-4);margin-bottom:var(--space-4); }
+.collab-info { flex:1; }
+.collab-name { font-weight:700;font-size:1rem;margin-bottom:2px; }
+.collab-meta { font-size:.8rem;color:var(--text-muted); }
+.collab-project { font-size:.85rem;color:var(--text-secondary);margin-bottom:var(--space-4);padding:var(--space-3);background:var(--bg-surface);border-radius:var(--radius-md);border-left:3px solid var(--accent); }
+.collab-looking { font-size:.8rem;color:var(--text-secondary);margin-bottom:var(--space-4); }
+.collab-actions { display:flex;gap:var(--space-3);align-items:center; }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="app-shell">
+  <div id="sidebarMount"></div>
+  <div class="main-content">
+    <div id="topbarMount"></div>
+    <div class="page-content page-enter">
+
+      <div class="page-header">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);">
+          <div>
+
+            <h2>Find Research Collaborators</h2>
+            <p>Discover teammates across all UIU departments</p>
+          </div>
+          <button class="btn btn-primary" data-modal-open="postModal"> Post Looking-for-Teammate</button>
+        </div>
+      </div>
+
+      <!-- Search bar -->
+      <div style="display:flex;gap:var(--space-4);margin-bottom:var(--space-6);flex-wrap:wrap;">
+        <div class="search-bar" style="flex:1;max-width:480px;">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+          <input type="text" placeholder="Search by name, skill, topic…" id="collabSearch">
+        </div>
+        <select class="form-input" style="width:auto;" id="sortFilter">
+          <option>Sort: Most Active</option>
+          <option>Sort: Highest Reputation</option>
+          <option>Sort: Newest</option>
+        </select>
+      </div>
+
+      <div class="collab-layout">
+        <!-- Filters -->
+        <div class="filter-panel">
+          <div class="filter-title"> Filters</div>
+          <div class="filter-section">
+            <div class="filter-section-label">Department</div>
+            <label class="filter-option"><input type="checkbox" checked> All Departments</label>
+            <label class="filter-option"><input type="checkbox"> CSE</label>
+            <label class="filter-option"><input type="checkbox"> EEE</label>
+            <label class="filter-option"><input type="checkbox"> BBA</label>
+            <label class="filter-option"><input type="checkbox"> ME</label>
+          </div>
+          <div class="filter-section">
+            <div class="filter-section-label">Year</div>
+            <label class="filter-option"><input type="checkbox" checked> All Years</label>
+            <label class="filter-option"><input type="checkbox"> 1st Year</label>
+            <label class="filter-option"><input type="checkbox"> 2nd Year</label>
+            <label class="filter-option"><input type="checkbox"> 3rd Year</label>
+            <label class="filter-option"><input type="checkbox"> 4th Year</label>
+            <label class="filter-option"><input type="checkbox"> Graduate</label>
+          </div>
+          <div class="filter-section">
+            <div class="filter-section-label">Skills</div>
+            <label class="filter-option"><input type="checkbox"> Machine Learning</label>
+            <label class="filter-option"><input type="checkbox"> Web Development</label>
+            <label class="filter-option"><input type="checkbox"> IoT</label>
+            <label class="filter-option"><input type="checkbox"> Data Analysis</label>
+            <label class="filter-option"><input type="checkbox"> Blockchain</label>
+          </div>
+          <div class="filter-section">
+            <div class="filter-section-label">Status</div>
+            <label class="filter-option"><input type="checkbox" checked> Online Now</label>
+            <label class="filter-option"><input type="checkbox" checked> Open to Collaborate</label>
+          </div>
+          <button class="btn btn-ghost btn-sm btn-block mt-2" onclick="Toast.show('Filters cleared','info')">Clear Filters</button>
+        </div>
+
+        <!-- Student cards -->
+        <div class="grid-2" id="collabGrid"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Post Looking-for-Teammate Modal -->
+<div class="modal-overlay" id="postModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title"> Post: Looking for Teammate</div>
+      <span class="modal-close" data-modal-close="postModal">&times;</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-5);">
+      <div class="form-group">
+        <label class="form-label">Project Title</label>
+        <input class="form-input" placeholder="e.g. AI-based Healthcare Diagnosis System">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-input" placeholder="Describe your project and what kind of collaborators you need…"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Domain / Research Area</label>
+        <select class="form-input">
+          <option>AI / Machine Learning</option><option>Web Development</option><option>IoT</option>
+          <option>Blockchain</option><option>Data Science</option><option>NLP</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Skills Needed <span style="color:var(--text-muted);">(comma-separated)</span></label>
+        <input class="form-input" placeholder="e.g. Python, TensorFlow, React">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Number of Teammates Needed</label>
+        <input class="form-input" type="number" min="1" max="10" value="2">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-modal-close="postModal">Cancel</button>
+      <button class="btn btn-primary" onclick="submitPost()"> Post Request</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+document.getElementById('sidebarMount').outerHTML = buildSidebar('collaborators');
+document.getElementById('topbarMount').outerHTML  = buildTopbar('Find Collaborators','collaborators');
+
+function renderCards(students) {
+  const grid = document.getElementById('collabGrid');
+  grid.innerHTML = '';
+  students.forEach(s => {
+    const isOnline = s.status === 'online';
+    grid.innerHTML += `
+    <div class="collab-card reveal">
+      <div class="collab-card-header">
+        <div class="avatar-placeholder avatar-lg ${s.color}" style="width:56px;height:56px;font-size:1.1rem;">${s.initials}</div>
+        <div class="collab-info">
+          <div class="collab-name">${s.name}</div>
+          <div class="collab-meta">${s.department} · ${s.year}</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+            <div class="online-dot" style="${!isOnline?'background:var(--text-muted);box-shadow:none;':''}" ></div>
+            <span style="font-size:.72rem;color:var(--text-muted);">${s.status==='online'?'Online now':s.status==='away'?'Away':'Offline'}</span>
+          </div>
+        </div>
+        <span class="badge badge-accent"> ${s.reputation.toLocaleString()}</span>
+      </div>
+      <div class="collab-project"> ${s.project}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:var(--space-4);">
+        ${s.skills.slice(0,4).map(sk=>`<span class="tag">${sk}</span>`).join('')}
+      </div>
+      <div class="collab-looking"> Looking for: ${s.lookingFor.join(', ')}</div>
+      <div class="collab-actions">
+        <button class="btn btn-primary btn-sm" style="flex:1;" onclick="Toast.show('Collaboration request sent to ${s.name}! ','success')">Send Request</button>
+        <button class="btn btn-ghost btn-sm" onclick="Toast.show('Opening ${s.name}\\'s profile…','info')">View Profile</button>
+        <button class="btn btn-ghost btn-sm btn-icon" onclick="Toast.show('Message sent!','info')"></button>
+      </div>
+    </div>`;
+  });
+  ScrollReveal.init();
+}
+
+renderCards(DATA.students);
+
+document.getElementById('collabSearch').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  const filtered = DATA.students.filter(s =>
+    s.name.toLowerCase().includes(q) || s.department.toLowerCase().includes(q) ||
+    s.skills.some(sk=>sk.toLowerCase().includes(q)) || s.project.toLowerCase().includes(q)
+  );
+  renderCards(filtered);
+});
+
+function submitPost() {
+  Modal.close('postModal');
+  Toast.show('Your collaboration request has been posted! ','success');
+}
+</script>
+</body>
+</html>

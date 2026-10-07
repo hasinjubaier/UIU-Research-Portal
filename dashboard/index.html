@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — UIU Research Portal</title>
+<link rel="stylesheet" href="../assets/css/global.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<style>
+/*  Welcome banner  */
+.welcome-banner {
+  background: var(--primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+  position: relative; overflow: hidden;
+}
+.welcome-banner::before {
+  content: '';
+  position: absolute; top: -60%; right: -5%;
+  width: 320px; height: 320px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.welcome-text h2 { color: #fff; margin-bottom: var(--space-2); font-family: 'Inter', sans-serif; }
+.welcome-text p  { color: rgba(255,255,255,0.78); max-width: 460px; font-size: 0.9rem; }
+.welcome-actions { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-5); }
+.btn-wh {
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.28);
+  padding: 7px 18px;
+  border-radius: var(--radius-md);
+  font-size: 0.82rem; font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: all var(--dur-fast);
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  cursor: pointer; text-decoration: none;
+}
+.btn-wh:hover { background: rgba(255,255,255,0.28); }
+.btn-wh-solid {
+  background: #fff; color: var(--primary);
+  border: 1px solid #fff;
+  padding: 7px 18px;
+  border-radius: var(--radius-md);
+  font-size: 0.82rem; font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: all var(--dur-fast);
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  cursor: pointer; text-decoration: none;
+}
+.btn-wh-solid:hover { background: rgba(255,255,255,0.88); }
+
+.welcome-badge {
+  flex-shrink: 0;
+  width: 80px; height: 80px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius-xl);
+  display: flex; align-items: center; justify-content: center;
+}
+.welcome-badge svg { stroke: rgba(255,255,255,0.9); }
+@media(max-width: 700px) { .welcome-badge { display: none; } .welcome-banner { padding: var(--space-6); } }
+
+/*  Quick actions  */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+.quick-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--dur-mid) var(--ease);
+  text-decoration: none;
+  display: block;
+  box-shadow: var(--shadow-xs);
+}
+.quick-card:hover {
+  border-color: rgba(217,95,0,0.28);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+.quick-icon-box {
+  width: 38px; height: 38px;
+  background: var(--primary-glow);
+  border: 1px solid rgba(217,95,0,0.18);
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto var(--space-3);
+}
+.quick-icon-box svg { stroke: var(--primary); }
+.quick-label { font-size: 0.83rem; font-weight: 600; color: var(--text-primary); font-family: 'Inter', sans-serif; }
+.quick-sub   { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+
+/*  Main grid  */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 330px;
+  gap: var(--space-6);
+}
+@media(max-width: 1100px) { .dash-grid { grid-template-columns: 1fr; } }
+
+/*  Project mini row  */
+.project-mini {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+  transition: all var(--dur-fast);
+  cursor: pointer;
+  background: var(--bg-card);
+}
+.project-mini:hover { border-color: rgba(217,95,0,0.25); background: var(--bg-card-hover); box-shadow: var(--shadow-xs); }
+.project-mini-info  { flex: 1; min-width: 0; }
+.project-mini-title { font-weight: 600; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); font-family: 'Inter', sans-serif; }
+.project-mini-meta  { font-size: 0.73rem; color: var(--text-muted); margin-top: 2px; }
+
+/*  Rep card  */
+.rep-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+  box-shadow: var(--shadow-xs);
+}
+.rep-score {
+  font-family: 'Inter', sans-serif;
+  font-size: 2.6rem; font-weight: 800;
+  color: var(--primary);
+  text-align: center;
+  padding: var(--space-4) 0 var(--space-3);
+}
+.rep-sub { text-align: center; font-size: 0.78rem; color: var(--text-muted); margin-bottom: var(--space-4); }
+.rep-row {
+  display: flex; justify-content: space-around;
+  padding: var(--space-4) 0 var(--space-2);
+  border-top: 1px solid var(--border-card);
+}
+.rep-stat { text-align: center; }
+.rep-stat-val { font-weight: 700; font-size: 1rem; color: var(--text-primary); font-family: 'Inter', sans-serif; }
+.rep-stat-lbl { font-size: 0.68rem; color: var(--text-muted); margin-top: 2px; }
+
+/*  Deadline  */
+.deadline-item {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  transition: background var(--dur-fast);
+}
+.deadline-item:hover { background: var(--bg-surface); }
+.deadline-date { text-align: center; min-width: 38px; }
+.deadline-day  { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 1.2rem; line-height: 1; color: var(--primary); }
+.deadline-mon  { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+/*  Collab request card  */
+.collab-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-xs);
+}
+.collab-card .card-title { margin-bottom: var(--space-4); }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="app-shell">
+  <div id="sidebarMount"></div>
+  <div class="main-content">
+    <div id="topbarMount"></div>
+    <div class="page-content page-enter">
+
+      <!-- Welcome Banner -->
+      <div class="welcome-banner">
+        <div class="welcome-text">
+          <h2>Good day, Rafsan</h2>
+          <p>You have <strong style="color:#fff;">3 unread messages</strong>, <strong style="color:#fff;">2 pending tasks</strong>, and <strong style="color:#fff;">1 collaboration request</strong> waiting for you.</p>
+          <div class="welcome-actions">
+            <a href="../collaborators/index.html" class="btn-wh-solid">Find Collaborators</a>
+            <a href="../projects/index.html" class="btn-wh">My Projects</a>
+          </div>
+        </div>
+        <div class="welcome-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" width="36" height="36">
+            <path d="M9 3h6M10 3v6l-4 10a1 1 0 0 0 .9 1.4h10.2A1 1 0 0 0 18 19L14 9V3"/>
+            <path d="M7.5 14h9"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="stats-row mb-8">
+        <div class="stat-card">
+          <div class="stat-card-icon accent">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="7">0</div>
+          <div class="stat-label">Completed Projects</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <path d="M9 3h6M10 3v6l-4 10a1 1 0 0 0 .9 1.4h10.2A1 1 0 0 0 18 19L14 9V3"/><path d="M7.5 14h9"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="2">0</div>
+          <div class="stat-label">Ongoing Projects</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="134">0</div>
+          <div class="stat-label">Total Contributions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="2840">0</div>
+          <div class="stat-label">Reputation Points</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon teal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="12">0</div>
+          <div class="stat-label">Resources Shared</div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <a href="../collaborators/index.html" class="quick-card">
+          <div class="quick-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" width="17" height="17">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div class="quick-label">Find Teammate</div>
+          <div class="quick-sub">Browse collaborators</div>
+        </a>
+        <a href="../projects/index.html" class="quick-card">
+          <div class="quick-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" width="17" height="17">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+          </div>
+          <div class="quick-label">New Project</div>
+          <div class="quick-sub">Start collaborating</div>
+        </a>
+        <a href="../resources/index.html" class="quick-card">
+          <div class="quick-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" width="17" height="17">
+              <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+              <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+            </svg>
+          </div>
+          <div class="quick-label">Upload Resource</div>
+          <div class="quick-sub">Share with community</div>
+        </a>
+        <a href="../ideas/index.html" class="quick-card">
+          <div class="quick-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" width="17" height="17">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <div class="quick-label">Post Idea</div>
+          <div class="quick-sub">Innovation Hub</div>
+        </a>
+        <a href="../editor/index.html" class="quick-card">
+          <div class="quick-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" width="17" height="17">
+              <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+          </div>
+          <div class="quick-label">Research Editor</div>
+          <div class="quick-sub">Write together</div>
+        </a>
+        <a href="../events/index.html" class="quick-card">
+          <div class="quick-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" width="17" height="17">
+              <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <div class="quick-label">Events</div>
+          <div class="quick-sub">Hackathons &amp; more</div>
+        </a>
+      </div>
+
+      <!-- Main content grid -->
+      <div class="dash-grid">
+        <div>
+          <!-- Active Projects -->
+          <div class="card mb-6">
+            <div class="card-header">
+              <div class="card-title">Active Projects</div>
+              <a href="../projects/index.html" class="btn btn-ghost btn-sm">View All</a>
+            </div>
+            <div id="activeProjects"></div>
+          </div>
+
+          <!-- Activity Feed -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Recent Activity</div>
+            </div>
+            <div id="activityFeed"></div>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div>
+          <!-- Reputation card -->
+          <div class="rep-card mb-6">
+            <div class="card-header" style="margin-bottom:0;">
+              <div class="card-title">Your Reputation</div>
+              <span class="badge badge-accent">Rank #4</span>
+            </div>
+            <div class="rep-score">2,840</div>
+            <div class="rep-sub">Total Points</div>
+            <div class="rep-row">
+              <div class="rep-stat"><div class="rep-stat-val">92</div><div class="rep-stat-lbl">This Week</div></div>
+              <div class="rep-stat"><div class="rep-stat-val">340</div><div class="rep-stat-lbl">This Month</div></div>
+              <div class="rep-stat"><div class="rep-stat-val">Top 5%</div><div class="rep-stat-lbl">Department</div></div>
+            </div>
+            <a href="../reputation/index.html" class="btn btn-outline btn-block btn-sm mt-4">View Leaderboard</a>
+          </div>
+
+          <!-- Upcoming deadlines -->
+          <div class="card mb-5">
+            <div class="card-header"><div class="card-title">Upcoming Deadlines</div></div>
+            <div id="deadlineList"></div>
+          </div>
+
+          <!-- Collaboration request -->
+          <div class="collab-card">
+            <div class="card-title" style="margin-bottom:var(--space-4);">Collaboration Request</div>
+            <div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-4);">
+              <div class="avatar-placeholder avatar-md purple" style="width:44px;height:44px;">NJ</div>
+              <div>
+                <div style="font-weight:600;font-size:0.9rem;color:var(--text-primary);">Nusrat Jahan</div>
+                <div style="font-size:0.73rem;color:var(--text-muted);">EEE &middot; 4th Year</div>
+              </div>
+            </div>
+            <p style="font-size:0.83rem;color:var(--text-secondary);margin-bottom:var(--space-4);line-height:1.65;">Working on a Smart Grid Monitoring System and looking for an ML expert to collaborate with.</p>
+            <div style="display:flex;gap:var(--space-3);">
+              <button class="btn btn-primary btn-sm" style="flex:1;" onclick="Toast.show('Request accepted. Check your messages.','success')">Accept</button>
+              <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="Toast.show('Request declined.','info')">Decline</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="toast-container"></div>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+document.getElementById('sidebarMount').outerHTML = buildSidebar('dashboard');
+document.getElementById('topbarMount').outerHTML  = buildTopbar('Dashboard', 'dashboard');
+
+// Active projects
+const ap = document.getElementById('activeProjects');
+DATA.projects.filter(p => p.status === 'active').forEach(p => {
+  const members = p.members.map(id => {
+    const s = DATA.getStudent(id);
+    return `<div class="avatar-placeholder avatar-sm ${s.color||'accent'}" style="width:24px;height:24px;font-size:.6rem;margin-right:-5px;border:2px solid var(--bg-card);">${s.initials}</div>`;
+  }).join('');
+  ap.innerHTML += `
+  <div class="project-mini" onclick="window.location='../projects/workspace.html'">
+    <div style="flex:1;min-width:0;">
+      <div class="project-mini-title">${p.title}</div>
+      <div class="project-mini-meta">${p.domain} &middot; Due ${new Date(p.deadline).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
+      <div class="progress-bar mt-2"><div class="progress-fill" style="width:${p.progress}%"></div></div>
+    </div>
+    <div style="display:flex;align-items:center;padding-left:4px;">${members}</div>
+  </div>`;
+});
+
+// Activity feed — SVG icons instead of emojis
+const af = document.getElementById('activityFeed');
+const activities = [
+  { text: 'You uploaded "Chest X-ray Dataset v1.2"', time: '20 min ago', color: 'accent' },
+  { text: 'Task "Train CNN baseline model" moved to In Progress', time: '1 hour ago', color: 'green' },
+  { text: 'Rakibul commented on your research proposal', time: '2 hours ago', color: 'purple' },
+  { text: 'Your blog post received 10 new likes', time: '3 hours ago', color: 'orange' },
+  { text: 'Nusrat Jahan sent a collaboration request', time: '5 hours ago', color: 'accent' },
+];
+const dotColor = { accent: 'var(--primary)', green: 'var(--green)', purple: '#6D28D9', orange: 'var(--amber)' };
+activities.forEach(a => {
+  af.innerHTML += `
+  <div class="activity-item">
+    <div class="activity-icon" style="background:${dotColor[a.color]||dotColor.accent}18;border:1px solid ${dotColor[a.color]||dotColor.accent}28;">
+      <div style="width:6px;height:6px;border-radius:50%;background:${dotColor[a.color]||dotColor.accent};"></div>
+    </div>
+    <div class="activity-text">${a.text}</div>
+    <div class="activity-time">${a.time}</div>
+  </div>`;
+});
+
+// Deadlines
+const dl = document.getElementById('deadlineList');
+const deadlines = [
+  { day: '18', mon: 'May', title: 'Train CNN baseline model', project: 'AI Healthcare' },
+  { day: '22', mon: 'May', title: 'Implement DICOM reader', project: 'AI Healthcare' },
+  { day: '28', mon: 'May', title: 'Research augmentation docs', project: 'AI Healthcare' },
+];
+deadlines.forEach(d => {
+  dl.innerHTML += `
+  <div class="deadline-item">
+    <div class="deadline-date">
+      <div class="deadline-day">${d.day}</div>
+      <div class="deadline-mon">${d.mon}</div>
+    </div>
+    <div>
+      <div style="font-weight:500;font-size:0.85rem;color:var(--text-primary);">${d.title}</div>
+      <div style="font-size:0.73rem;color:var(--text-muted);">${d.project}</div>
+    </div>
+  </div>`;
+});
+</script>
+</body>
+</html>

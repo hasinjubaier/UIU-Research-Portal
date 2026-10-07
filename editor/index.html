@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Editor — UIU Research Portal</title>
+<link rel="stylesheet" href="../assets/css/global.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<style>
+.editor-layout { display:grid;grid-template-columns:1fr 280px;gap:var(--space-6); }
+@media(max-width:1000px){.editor-layout{grid-template-columns:1fr;}}
+.editor-toolbar-custom { background:var(--bg-surface);border:1px solid var(--border-card);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:var(--space-3) var(--space-4);display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap; }
+.editor-wrap { border:1px solid var(--border-card);border-radius:0 0 var(--radius-lg) var(--radius-lg);background:var(--bg-card);overflow:hidden; }
+.ql-toolbar { background:var(--bg-surface) !important;border:none !important;border-bottom:1px solid var(--border-card) !important; }
+.ql-container { background:var(--bg-card) !important;border:none !important;min-height:500px;font-family:'Inter',sans-serif !important;font-size:.95rem !important; }
+.ql-editor { color:var(--text-primary) !important;padding:var(--space-6) !important;line-height:1.8 !important; }
+.ql-editor.ql-blank::before { color:var(--text-muted) !important; }
+[data-theme="light"] .ql-toolbar svg .ql-stroke { stroke:#3D4A6B; }
+[data-theme="light"] .ql-toolbar svg .ql-fill  { fill:#3D4A6B; }
+.ql-snow .ql-picker { color:var(--text-secondary); }
+.collab-user { display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2);border-radius:var(--radius-sm);font-size:.8rem; }
+.typing-dot { display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1s infinite;margin-right:2px; }
+.version-item { padding:var(--space-3);border:1px solid var(--border-card);border-radius:var(--radius-md);margin-bottom:var(--space-2);cursor:pointer;transition:all var(--dur-fast);font-size:.85rem; }
+.version-item:hover { border-color:var(--border-hover);background:var(--bg-card-hover); }
+.comment-item { padding:var(--space-3);border-left:3px solid var(--accent);background:var(--bg-surface);border-radius:0 var(--radius-md) var(--radius-md) 0;margin-bottom:var(--space-3);font-size:.85rem; }
+.autosave-indicator { display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="app-shell">
+  <div id="sidebarMount"></div>
+  <div class="main-content">
+    <div id="topbarMount"></div>
+    <div class="page-content page-enter">
+
+      <div class="page-header">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);">
+          <div>
+
+            <h2>Collaborative Research Editor</h2>
+          </div>
+          <div style="display:flex;gap:var(--space-3);align-items:center;">
+            <div class="autosave-indicator" id="autosaveStatus"><div class="spinner" style="width:14px;height:14px;border-width:2px;display:none;" id="savingSpinner"></div><span id="autosaveText"> All changes saved</span></div>
+            <button class="btn btn-ghost btn-sm" data-modal-open="exportModal"> Export</button>
+            <button class="btn btn-primary btn-sm" onclick="Toast.show('Document shared with team! ','success')"> Share</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Document title -->
+      <div style="margin-bottom:var(--space-5);">
+        <input id="docTitle" class="form-input" value="Deep Learning for Medical Image Analysis: A UIU Approach" style="font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;background:transparent;border:2px dashed var(--border-card);padding:var(--space-4);" oninput="triggerAutosave()">
+      </div>
+
+      <div class="editor-layout">
+        <!-- Editor -->
+        <div>
+          <!-- Citation toolbar -->
+          <div class="editor-toolbar-custom">
+            <span style="font-size:.8rem;color:var(--text-muted);font-weight:600;">Citation Style:</span>
+            <select class="form-input" style="width:auto;padding:5px 12px;font-size:.8rem;">
+              <option>IEEE</option><option>APA 7th</option><option>MLA</option><option>Chicago</option>
+            </select>
+            <button class="btn btn-ghost btn-sm" onclick="insertCitation()"> Insert Citation</button>
+            <button class="btn btn-ghost btn-sm" onclick="Toast.show('Auto-formatting applied!','success')"> Auto Format</button>
+            <button class="btn btn-ghost btn-sm" onclick="Toast.show('Word count: 1,248 words','info')"> Word Count</button>
+          </div>
+          <div id="editorWrap" class="editor-wrap">
+            <div id="quillEditor"></div>
+          </div>
+        </div>
+
+        <!-- Right panel -->
+        <div style="display:flex;flex-direction:column;gap:var(--space-5);">
+          <!-- Collaborators online -->
+          <div class="card">
+            <div class="card-title mb-3"> Currently Editing</div>
+            <div class="collab-user"><div class="online-dot"></div><div class="avatar-placeholder" style="width:26px;height:26px;font-size:.6rem;border-radius:50%;background:var(--accent-glow);color:var(--accent);">RA</div><span>You (Rafsan)</span></div>
+            <div class="collab-user"><div class="online-dot"></div><div class="avatar-placeholder" style="width:26px;height:26px;font-size:.6rem;border-radius:50%;background:var(--purple-glow);color:var(--purple);">RI</div><span>Rakibul <span class="badge badge-green" style="font-size:.65rem;">typing…</span></span></div>
+          </div>
+
+          <!-- Version history -->
+          <div class="card">
+            <div class="card-title mb-3"> Version History</div>
+            <div class="version-item" onclick="Toast.show('Restoring v1.3… Done!','success')"><div style="font-weight:600;">v1.3 · Today 2:30 PM</div><div style="color:var(--text-muted);">Rafsan Ahmed · +340 chars</div></div>
+            <div class="version-item" onclick="Toast.show('Restoring v1.2…','info')"><div style="font-weight:600;">v1.2 · Today 11:00 AM</div><div style="color:var(--text-muted);">Rakibul Islam · +520 chars</div></div>
+            <div class="version-item" onclick="Toast.show('Restoring v1.1…','info')"><div style="font-weight:600;">v1.1 · Yesterday</div><div style="color:var(--text-muted);">Maliha Rahman · +180 chars</div></div>
+          </div>
+
+          <!-- Comments -->
+          <div class="card">
+            <div class="card-header"><div class="card-title"> Comments</div><button class="btn btn-ghost btn-sm btn-icon" onclick="addComment()">+</button></div>
+            <div id="commentsList">
+              <div class="comment-item"><div style="font-weight:600;margin-bottom:4px;">Rakibul Islam · 1h ago</div><div style="color:var(--text-secondary);">Should we add the EfficientNet results table here?</div></div>
+              <div class="comment-item" style="border-left-color:var(--purple);"><div style="font-weight:600;margin-bottom:4px;">Maliha Rahman · 3h ago</div><div style="color:var(--text-secondary);">The introduction needs more context about related work.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Export Modal -->
+<div class="modal-overlay" id="exportModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title"> Export Document</div><span class="modal-close" data-modal-close="exportModal">&times;</span></div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-3);">
+      <button class="btn btn-ghost btn-block" onclick="Modal.close('exportModal');Toast.show('Exporting as PDF…','info')"> Export as PDF</button>
+      <button class="btn btn-ghost btn-block" onclick="Modal.close('exportModal');Toast.show('Exporting as DOCX…','info')"> Export as DOCX</button>
+      <button class="btn btn-ghost btn-block" onclick="Modal.close('exportModal');Toast.show('Exporting as LaTeX…','info')"> Export as LaTeX</button>
+      <button class="btn btn-ghost btn-block" onclick="Modal.close('exportModal');Toast.show('Exporting as Markdown…','info')"> Export as Markdown</button>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" data-modal-close="exportModal">Cancel</button></div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+document.getElementById('sidebarMount').outerHTML = buildSidebar('editor');
+document.getElementById('topbarMount').outerHTML  = buildTopbar('Research Editor','editor');
+
+// Quill editor
+const quill = new Quill('#quillEditor', {
+  theme: 'snow',
+  placeholder: 'Start writing your research paper…',
+  modules: {
+    toolbar: [
+      [{ heading:[1,2,3,4,false] }],
+      ['bold','italic','underline','strike'],
+      [{ list:'ordered'},{list:'bullet'}],
+      ['blockquote','code-block'],
+      ['link'],
+      [{ align:[] }],
+      ['clean']
+    ]
+  }
+});
+
+// Sample content
+quill.setText('');
+quill.clipboard.dangerouslyPasteHTML(`
+<h1>Deep Learning for Medical Image Analysis</h1>
+<h2>Abstract</h2>
+<p>Medical image analysis has become increasingly important in clinical diagnosis. Deep learning, particularly convolutional neural networks (CNNs), has shown remarkable performance in various medical imaging tasks including disease detection, segmentation, and classification. In this paper, we present a comprehensive study of deep learning approaches applied to chest X-ray analysis for pneumonia detection using a dataset of 50,000 images from the National Institutes of Health (NIH).</p>
+<h2>1. Introduction</h2>
+<p>Chest X-rays are one of the most commonly performed diagnostic imaging procedures worldwide. Manual interpretation of chest X-rays by radiologists is time-consuming and subject to inter-observer variability. Recent advances in deep learning offer the potential for automated, accurate, and consistent analysis of chest radiographs.</p>
+<h2>2. Related Work</h2>
+<p>Several deep learning architectures have been applied to medical image analysis. CheXNet [1] achieved radiologist-level performance on pneumonia detection using a 121-layer DenseNet. Similarly, ChestX-Ray14 [2] demonstrated multi-label classification across 14 chest pathologies.</p>
+`);
+
+let autosaveTimeout;
+function triggerAutosave() {
+  document.getElementById('autosaveText').textContent = '⏳ Saving…';
+  clearTimeout(autosaveTimeout);
+  autosaveTimeout = setTimeout(() => {
+    document.getElementById('autosaveText').textContent = ' All changes saved';
+  }, 1200);
+}
+quill.on('text-change', triggerAutosave);
+
+function insertCitation() {
+  const idx = quill.getSelection();
+  if(idx) quill.insertText(idx.index, ' [2] ', 'user');
+  Toast.show('Citation inserted at cursor position','success');
+}
+
+function addComment() {
+  const text = prompt('Add a comment:');
+  if(text) {
+    document.getElementById('commentsList').innerHTML += `<div class="comment-item" style="border-left-color:var(--green);"><div style="font-weight:600;margin-bottom:4px;">You · Just now</div><div style="color:var(--text-secondary);">${text}</div></div>`;
+    Toast.show('Comment added!','success');
+  }
+}
+</script>
+</body>
+</html>

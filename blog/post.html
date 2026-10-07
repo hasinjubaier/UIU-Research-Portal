@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog Post — UIU Research Portal</title>
+<link rel="stylesheet" href="../assets/css/global.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<style>
+.post-layout { display:grid;grid-template-columns:1fr 300px;gap:var(--space-8); }
+@media(max-width:1000px){.post-layout{grid-template-columns:1fr;}}
+.post-content { font-size:1rem;line-height:1.9;color:var(--text-secondary); }
+.post-content h2 { color:var(--text-primary);margin:var(--space-8) 0 var(--space-4);font-size:1.4rem; }
+.post-content h3 { color:var(--text-primary);margin:var(--space-6) 0 var(--space-3);font-size:1.1rem; }
+.post-content p  { margin-bottom:var(--space-5); }
+.post-content blockquote { border-left:4px solid var(--accent);background:var(--accent-glow);padding:var(--space-4) var(--space-5);border-radius:0 var(--radius-md) var(--radius-md) 0;margin:var(--space-6) 0;font-style:italic; }
+.post-content code { background:var(--bg-surface);border:1px solid var(--border-card);border-radius:4px;padding:2px 8px;font-family:monospace;font-size:.9em;color:var(--accent); }
+.post-content pre  { background:var(--bg-surface);border:1px solid var(--border-card);border-radius:var(--radius-md);padding:var(--space-5);overflow-x:auto;margin:var(--space-5) 0; }
+.post-content pre code { background:none;border:none;padding:0; }
+
+.post-hero { height:280px;background:linear-gradient(135deg,var(--primary) 0%,#1a2080 40%,#2d1b69 100%);border-radius:var(--radius-xl);display:flex;align-items:center;justify-content:center;font-size:5rem;margin-bottom:var(--space-8);position:relative;overflow:hidden; }
+
+.comment-input-wrap { display:flex;gap:var(--space-3);margin-bottom:var(--space-5);align-items:flex-start; }
+.comment-card { padding:var(--space-4);border:1px solid var(--border-card);border-radius:var(--radius-md);margin-bottom:var(--space-4);transition:background var(--dur-fast); }
+.comment-card:hover { background:var(--bg-card-hover); }
+
+.toc-item { display:block;padding:6px 12px;font-size:.85rem;color:var(--text-muted);border-left:2px solid var(--border-card);transition:all var(--dur-fast);cursor:pointer; }
+.toc-item:hover,.toc-item.active { color:var(--accent);border-left-color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="app-shell">
+  <div id="sidebarMount"></div>
+  <div class="main-content">
+    <div id="topbarMount"></div>
+    <div class="page-content page-enter">
+
+      <!-- Breadcrumb -->
+      <div style="display:flex;align-items:center;gap:var(--space-2);margin-bottom:var(--space-6);font-size:.875rem;color:var(--text-muted);">
+        <a href="index.html" style="color:var(--accent);">Blog</a>
+        <span>/</span>
+        <span>Tutorial</span>
+        <span>/</span>
+        <span style="color:var(--text-secondary);">Research Paper Guide</span>
+      </div>
+
+      <!-- Hero -->
+      <div class="post-hero">
+        <div class="hero-bg-orb blue" style="opacity:.4;"></div>
+        <div style="position:relative;z-index:1;color:#fff;display:flex;flex-direction:column;align-items:center;gap:var(--space-2);text-align:center;padding:var(--space-6);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="56" height="56" style="stroke:rgba(255,255,255,0.95);margin-bottom:var(--space-2);">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            <path d="M9 6h6M9 10h6M9 14h6"/>
+          </svg>
+          <div style="font-family:'Lora',serif;font-size:1.8rem;font-weight:700;">Academic Writing Toolkit</div>
+          <div style="font-size:0.875rem;color:rgba(255,255,255,0.75);max-width:360px;font-family:'Inter',sans-serif;">Master the art of scientific documentation with our structured guide</div>
+        </div>
+      </div>
+
+      <div class="post-layout">
+        <!-- Main content -->
+        <article>
+          <div style="margin-bottom:var(--space-6);">
+            <div style="display:flex;gap:var(--space-2);margin-bottom:var(--space-4);">
+              <span class="badge badge-purple">Tutorial</span>
+              <span class="badge badge-accent">10 min read</span>
+            </div>
+            <h1 style="margin-bottom:var(--space-4);">A Beginner's Guide to Writing a Research Paper</h1>
+            <div style="display:flex;align-items:center;gap:var(--space-5);flex-wrap:wrap;padding-bottom:var(--space-5);border-bottom:1px solid var(--border-card);">
+              <div style="display:flex;align-items:center;gap:var(--space-3);">
+                <div class="avatar-placeholder avatar-md accent" style="width:44px;height:44px;">RA</div>
+                <div><div style="font-weight:700;">Rafsan Ahmed</div><div style="font-size:.75rem;color:var(--text-muted);">CSE · 3rd Year · Apr 10, 2025</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:var(--space-4);font-size:.85rem;color:var(--text-muted);margin-left:auto;">
+                <button class="like-btn" id="likeBtn" onclick="toggleLike()" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:.9rem;color:var(--text-muted);transition:color var(--dur-fast);"> <span id="likeCount">201</span></button>
+                <span> 43 comments</span>
+                <button class="btn btn-ghost btn-sm" onclick="Toast.show('Link copied!','success')"> Share</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="post-content" id="postContent">
+            <p>Writing your first research paper is one of the most daunting tasks as a university student. After struggling through my own first paper during my 2nd year at UIU, I put together this comprehensive guide to help fellow students navigate the entire process — from choosing a topic to final submission.</p>
+
+            <h2>1. Choose a Research Topic</h2>
+            <p>Your topic should be specific enough to be manageable but broad enough to have sufficient literature. Ask yourself:</p>
+            <p>• What am I genuinely curious about?<br>• Is there existing research I can build upon?<br>• Do I have access to the necessary data or tools?</p>
+            <blockquote>"The best research topic is one that you find genuinely fascinating — curiosity is the engine of good research."</blockquote>
+
+            <h2>2. Conduct a Literature Review</h2>
+            <p>Before writing a single word of your paper, you need to understand what has already been done. Use Google Scholar, IEEE Xplore, and PubMed to find related work. Read at least 20-30 papers in your area.</p>
+            <p>Use a tool like Zotero or Mendeley to manage your references from the start — you will thank yourself later.</p>
+
+            <h2>3. Define Your Research Question</h2>
+            <p>A clear, focused research question is the backbone of your paper. It should be:</p>
+            <p>• <strong>Specific</strong> — not "AI in healthcare" but "CNN-based pneumonia detection from chest X-rays"<br>• <strong>Measurable</strong> — you need a way to evaluate your results<br>• <strong>Achievable</strong> — within your time and resource constraints</p>
+
+            <h2>4. Structure Your Paper</h2>
+            <p>Most research papers follow the IMRaD structure:</p>
+            <pre><code>Abstract
+1. Introduction
+2. Related Work / Literature Review
+3. Methodology
+4. Experiments / Results
+5. Discussion
+6. Conclusion
+References</code></pre>
+
+            <h2>5. Write the Paper</h2>
+            <p>Here's a counterintuitive tip: <strong>don't write the Abstract first</strong>. Write your Methodology and Results sections first — those are the concrete parts you know best. Then write the Introduction and Related Work, and finally write the Abstract last.</p>
+
+            <h2>6. Citations & References</h2>
+            <p>Always use a citation style appropriate for your field. At UIU's CSE department, we typically use <code>IEEE</code> style. The UIU Research Portal's built-in editor supports automatic IEEE and APA formatting.</p>
+
+            <h2>7. Review and Revise</h2>
+            <p>Never submit a first draft. Let teammates review it through the Research Portal's collaborative editor. Pay attention to clarity, logical flow, and grammar. Run it through Grammarly and Turnitin before submission.</p>
+          </div>
+
+          <!-- Tags -->
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin:var(--space-8) 0;">
+            <span class="tag active">Research Writing</span><span class="tag active">Academic</span><span class="tag active">IEEE</span><span class="tag active">Tutorial</span>
+          </div>
+
+          <!-- Comments -->
+          <div style="border-top:1px solid var(--border-card);padding-top:var(--space-8);">
+            <h3 style="margin-bottom:var(--space-6);"> 43 Comments</h3>
+            <div class="comment-input-wrap">
+              <div class="avatar-placeholder avatar-sm accent" style="width:36px;height:36px;">RA</div>
+              <div style="flex:1;">
+                <textarea class="form-input" id="commentInput" placeholder="Add a thoughtful comment…" style="min-height:80px;"></textarea>
+                <button class="btn btn-primary btn-sm mt-3" onclick="postComment()">Post Comment</button>
+              </div>
+            </div>
+            <div id="commentList">
+              <div class="comment-card"><div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-3);"><div class="avatar-placeholder" style="width:32px;height:32px;font-size:.7rem;border-radius:50%;background:var(--purple-glow);color:var(--purple);">NJ</div><div><div style="font-weight:600;font-size:.9rem;">Nusrat Jahan</div><div style="font-size:.72rem;color:var(--text-muted);">2 days ago</div></div></div><p style="font-size:.875rem;color:var(--text-secondary);">This guide saved my semester! The tip about writing methodology first is gold. I always used to start with abstract and got stuck every time.</p></div>
+              <div class="comment-card"><div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-3);"><div class="avatar-placeholder" style="width:32px;height:32px;font-size:.7rem;border-radius:50%;background:var(--green-glow,rgba(16,185,129,.15));color:var(--green);">MR</div><div><div style="font-weight:600;font-size:.9rem;">Maliha Rahman</div><div style="font-size:.72rem;color:var(--text-muted);">1 day ago</div></div></div><p style="font-size:.875rem;color:var(--text-secondary);">Could you write a follow-up specifically about IEEE citation style? That's where I always struggle the most.</p></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Sidebar -->
+        <div style="display:flex;flex-direction:column;gap:var(--space-5);">
+          <!-- TOC -->
+          <div class="card">
+            <div class="card-title mb-4"> Table of Contents</div>
+            <a class="toc-item">1. Choose a Research Topic</a>
+            <a class="toc-item">2. Literature Review</a>
+            <a class="toc-item">3. Define Research Question</a>
+            <a class="toc-item">4. Structure Your Paper</a>
+            <a class="toc-item">5. Write the Paper</a>
+            <a class="toc-item">6. Citations & References</a>
+            <a class="toc-item">7. Review and Revise</a>
+          </div>
+
+          <!-- Author -->
+          <div class="card">
+            <div class="card-title mb-4"> About the Author</div>
+            <div style="text-align:center;padding:var(--space-4) 0;">
+              <div class="avatar-placeholder avatar-lg accent" style="width:64px;height:64px;margin:0 auto var(--space-3);">RA</div>
+              <div style="font-weight:700;">Rafsan Ahmed</div>
+              <div style="font-size:.8rem;color:var(--text-muted);">CSE · 3rd Year</div>
+              <div style="display:flex;justify-content:center;gap:var(--space-4);margin-top:var(--space-4);font-size:.8rem;color:var(--text-muted);">
+                <span> 4 posts</span><span> 450 likes</span>
+              </div>
+              <a href="../profile/index.html" class="btn btn-outline btn-sm btn-block mt-4">View Profile</a>
+            </div>
+          </div>
+
+          <!-- Related posts -->
+          <div class="card">
+            <div class="card-title mb-4"> Related Posts</div>
+            <div style="display:flex;flex-direction:column;gap:var(--space-3);">
+              <a href="post.html" style="padding:var(--space-3);border:1px solid var(--border-card);border-radius:var(--radius-md);transition:all var(--dur-fast);display:block;" onmouseover="this.style.borderColor='var(--border-hover)'" onmouseout="this.style.borderColor='var(--border-card)'">
+                <div style="font-size:.85rem;font-weight:600;margin-bottom:4px;">Getting Started with PyTorch for Computer Vision</div>
+                <div style="font-size:.72rem;color:var(--text-muted);"> 134 · 12 min read</div>
+              </a>
+              <a href="post.html" style="padding:var(--space-3);border:1px solid var(--border-card);border-radius:var(--radius-md);transition:all var(--dur-fast);display:block;" onmouseover="this.style.borderColor='var(--border-hover)'" onmouseout="this.style.borderColor='var(--border-card)'">
+                <div style="font-size:.85rem;font-weight:600;margin-bottom:4px;">How We Built a COVID-19 Pattern Analyzer in 3 Weeks</div>
+                <div style="font-size:.72rem;color:var(--text-muted);"> 87 · 8 min read</div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="toast-container"></div>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+document.getElementById('sidebarMount').outerHTML = buildSidebar('blog');
+document.getElementById('topbarMount').outerHTML  = buildTopbar('Blog Post','blog');
+
+function toggleLike(){
+  const btn=document.getElementById('likeBtn');
+  const count=document.getElementById('likeCount');
+  const liked=btn.style.color==='var(--red)';
+  btn.style.color=liked?'var(--text-muted)':'var(--red)';
+  count.textContent=liked?201:202;
+  if(!liked)Toast.show('Post liked! ','success');
+}
+
+function postComment(){
+  const inp=document.getElementById('commentInput');
+  if(!inp.value.trim()){Toast.show('Please write a comment first','error');return;}
+  const cl=document.getElementById('commentList');
+  cl.innerHTML=`<div class="comment-card animate-fadeInUp"><div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-3);"><div class="avatar-placeholder" style="width:32px;height:32px;font-size:.7rem;border-radius:50%;background:var(--accent-glow);color:var(--accent);">RA</div><div><div style="font-weight:600;font-size:.9rem;">Rafsan Ahmed (You)</div><div style="font-size:.72rem;color:var(--text-muted);">Just now</div></div></div><p style="font-size:.875rem;color:var(--text-secondary);">${inp.value}</p></div>`+cl.innerHTML;
+  inp.value='';
+  Toast.show('Comment posted! ','success');
+}
+
+// TOC highlight on scroll
+document.querySelectorAll('.toc-item').forEach((item,i)=>{
+  item.addEventListener('click',()=>{
+    document.querySelectorAll('.toc-item').forEach(t=>t.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

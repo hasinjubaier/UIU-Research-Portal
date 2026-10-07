@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications — UIU Research Portal</title>
+<link rel="stylesheet" href="../assets/css/global.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<style>
+.notif-item {
+  display: flex; align-items: flex-start; gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-card);
+  background: var(--bg-card);
+  transition: all var(--dur-fast);
+  cursor: pointer;
+  position: relative;
+  box-shadow: var(--shadow-xs);
+}
+.notif-item:hover { border-color: rgba(217,95,0,0.22); background: var(--bg-card-hover); }
+.notif-item.unread { border-left: 3px solid var(--primary); }
+.notif-icon {
+  width: 40px; height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-card);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.notif-icon svg { stroke: var(--primary); }
+.notif-icon.collab   { background: rgba(217,95,0,0.08); }
+.notif-icon.project  { background: rgba(109,40,217,0.08); }
+.notif-icon.project svg  { stroke: #6D28D9; }
+.notif-icon.message  { background: rgba(6,182,212,0.08); }
+.notif-icon.message svg  { stroke: #0891B2; }
+.notif-icon.idea     { background: rgba(180,83,9,0.08); }
+.notif-icon.idea svg     { stroke: var(--amber); }
+.notif-icon.blog     { background: rgba(185,28,28,0.08); }
+.notif-icon.blog svg     { stroke: var(--red); }
+.notif-icon.resource { background: rgba(22,101,52,0.08); }
+.notif-icon.resource svg { stroke: var(--green); }
+.notif-icon.event    { background: rgba(217,95,0,0.08); }
+.notif-icon.system   { background: rgba(180,83,9,0.08); }
+.notif-icon.system svg   { stroke: var(--amber); }
+
+.notif-text { flex: 1; min-width: 0; }
+.notif-msg  { font-size: 0.875rem; color: var(--text-primary); line-height: 1.5; }
+.notif-item.unread .notif-msg { font-weight: 600; }
+.notif-time { font-size: 0.73rem; color: var(--text-muted); margin-top: 3px; }
+.notif-dot  { width: 7px; height: 7px; border-radius: 50%; background: var(--primary); flex-shrink: 0; margin-top: 7px; }
+
+.filter-pill {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 0.8rem; font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--dur-fast);
+  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+}
+.filter-pill:hover { border-color: var(--primary); color: var(--primary); }
+.filter-pill.active { background: var(--primary-glow); color: var(--primary); border-color: rgba(217,95,0,0.3); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="app-shell">
+  <div id="sidebarMount"></div>
+  <div class="main-content">
+    <div id="topbarMount"></div>
+    <div class="page-content page-enter">
+
+      <div class="page-header">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);">
+          <div>
+            <h2>Notifications</h2>
+            <p>Stay updated on your projects, collaborations, and community</p>
+          </div>
+          <div style="display:flex;gap:var(--space-3);">
+            <button class="btn btn-ghost btn-sm" onclick="markAllRead()">Mark All Read</button>
+            <button class="btn btn-ghost btn-sm" onclick="Toast.show('Notification settings saved','info')">Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter pills -->
+      <div style="display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-6);" id="filterPills">
+        <button class="filter-pill active" data-filter="all">All <span class="badge badge-red" id="unreadCount" style="margin-left:4px;">3</span></button>
+        <button class="filter-pill" data-filter="collab">Collaboration</button>
+        <button class="filter-pill" data-filter="project">Project</button>
+        <button class="filter-pill" data-filter="message">Messages</button>
+        <button class="filter-pill" data-filter="idea">Ideas</button>
+        <button class="filter-pill" data-filter="system">Achievements</button>
+      </div>
+
+      <!-- Notification list -->
+      <div style="display:flex;flex-direction:column;gap:var(--space-3);" id="notifList"></div>
+
+    </div>
+  </div>
+</div>
+<div class="toast-container"></div>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+document.getElementById('sidebarMount').outerHTML = buildSidebar('notifications');
+document.getElementById('topbarMount').outerHTML  = buildTopbar('Notifications','notifications');
+
+// SVG icons per notification type
+const notifSVG = {
+  collab:   `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" width="18" height="18"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  project:  `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" width="18" height="18"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,
+  message:  `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" width="18" height="18"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+  idea:     `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+  blog:     `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" width="18" height="18"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+  resource: `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" width="18" height="18"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>`,
+  event:    `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" width="18" height="18"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  system:   `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" width="18" height="18"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>`,
+};
+
+function renderNotifications(list) {
+  const el = document.getElementById('notifList');
+  el.innerHTML = '';
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state"><h4>No notifications</h4><p>You are all caught up.</p></div>`;
+    return;
+  }
+  list.forEach((n, i) => {
+    el.innerHTML += `
+    <div class="notif-item ${n.read ? '' : 'unread'} reveal delay-${i % 4}" onclick="markRead(${n.id},this)">
+      <div class="notif-icon ${n.type}">${notifSVG[n.type] || notifSVG.system}</div>
+      <div class="notif-text">
+        <div class="notif-msg">${n.text}</div>
+        <div class="notif-time">${n.time}</div>
+      </div>
+      ${!n.read ? '<div class="notif-dot"></div>' : ''}
+    </div>`;
+  });
+  ScrollReveal.init();
+}
+
+renderNotifications(DATA.notifications);
+
+function markRead(id, el) {
+  el.classList.remove('unread');
+  el.querySelector('.notif-dot')?.remove();
+  el.querySelector('.notif-msg').style.fontWeight = '400';
+  const n = DATA.notifications.find(n => n.id === id);
+  if (n) n.read = true;
+  updateCount();
+}
+
+function markAllRead() {
+  DATA.notifications.forEach(n => n.read = true);
+  document.querySelectorAll('.notif-item').forEach(el => {
+    el.classList.remove('unread');
+    el.querySelector('.notif-dot')?.remove();
+    el.querySelector('.notif-msg').style.fontWeight = '400';
+  });
+  updateCount();
+  Toast.show('All notifications marked as read', 'success');
+}
+
+function updateCount() {
+  const count = DATA.notifications.filter(n => !n.read).length;
+  const badge = document.getElementById('unreadCount');
+  badge.textContent = count || '';
+  badge.style.display = count ? '' : 'none';
+}
+
+document.querySelectorAll('[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.filter;
+    renderNotifications(f === 'all' ? DATA.notifications : DATA.notifications.filter(n => n.type === f));
+  });
+});
+</script>
+</body>
+</html>

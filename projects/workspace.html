@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Workspace — UIU Research Portal</title>
+<link rel="stylesheet" href="../assets/css/global.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<style>
+.workspace-layout { display:grid;grid-template-columns:1fr 300px;gap:var(--space-6); }
+@media(max-width:1100px){.workspace-layout{grid-template-columns:1fr;}}
+
+.ws-header { background:linear-gradient(135deg,var(--primary),#1a2080);border-radius:var(--radius-xl);padding:var(--space-6) var(--space-8);margin-bottom:var(--space-6);display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);position:relative;overflow:hidden; }
+.ws-header::before { content:'';position:absolute;right:-60px;top:-60px;width:250px;height:250px;background:radial-gradient(circle,rgba(255,255,255,.06) 0%,transparent 70%); }
+.ws-header-title { color:#fff;font-size:1.4rem;margin-bottom:4px; }
+.ws-header-meta  { color:rgba(255,255,255,.6);font-size:.85rem; }
+
+/* Kanban */
+.kanban-todo    { border-top:3px solid var(--text-muted); }
+.kanban-inprog  { border-top:3px solid var(--accent); }
+.kanban-done    { border-top:3px solid var(--green); }
+.priority-high   { border-left:3px solid var(--red); }
+.priority-medium { border-left:3px solid var(--orange); }
+.priority-low    { border-left:3px solid var(--green); }
+
+/* Chat */
+.chat-panel { background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-lg);display:flex;flex-direction:column;height:400px; }
+.chat-header { padding:var(--space-4);border-bottom:1px solid var(--border-card);font-weight:600;font-size:.9rem; }
+.chat-messages { flex:1;overflow-y:auto;padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-3); }
+.chat-input-wrap { padding:var(--space-3);border-top:1px solid var(--border-card);display:flex;gap:var(--space-2); }
+.chat-input-wrap input { flex:1;background:var(--bg-input);border:1px solid var(--border-card);border-radius:var(--radius-md);padding:8px 12px;color:var(--text-primary);outline:none;font-size:.875rem; }
+.chat-input-wrap input:focus { border-color:var(--accent); }
+
+/* Milestone */
+.milestone-item { display:flex;align-items:center;gap:var(--space-4);padding:var(--space-3);border-radius:var(--radius-md); }
+.milestone-dot { width:16px;height:16px;border-radius:50%;flex-shrink:0; }
+.milestone-dot.done    { background:var(--green);box-shadow:0 0 8px rgba(16,185,129,.4); }
+.milestone-dot.current { background:var(--accent);box-shadow:0 0 8px rgba(79,142,247,.4);animation:pulse 2s infinite; }
+.milestone-dot.upcoming{ background:var(--bg-input);border:2px solid var(--border-card); }
+
+/* Task card add btn */
+.add-task-btn { background:none;border:2px dashed var(--border-card);border-radius:var(--radius-md);padding:var(--space-3);color:var(--text-muted);font-size:.85rem;cursor:pointer;transition:all var(--dur-fast);width:100%;text-align:center; }
+.add-task-btn:hover { border-color:var(--accent);color:var(--accent);background:var(--accent-glow); }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="app-shell">
+  <div id="sidebarMount"></div>
+  <div class="main-content">
+    <div id="topbarMount"></div>
+    <div class="page-content page-enter">
+
+      <!-- Workspace header -->
+      <div class="ws-header">
+        <div style="position:relative;z-index:1;">
+          <div class="ws-header-title font-heading"> AI-Based Healthcare Diagnosis</div>
+          <div class="ws-header-meta">AI / Healthcare · Private · Due June 30, 2025</div>
+          <div style="display:flex;align-items:center;gap:var(--space-4);margin-top:var(--space-3);">
+            <div style="display:flex;">
+              <div class="avatar-placeholder" style="width:28px;height:28px;font-size:.6rem;border-radius:50%;background:rgba(79,142,247,.3);color:#fff;border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:700;">RA</div>
+              <div class="avatar-placeholder" style="width:28px;height:28px;font-size:.6rem;border-radius:50%;background:rgba(124,58,237,.3);color:#fff;border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:700;margin-left:-6px;">RI</div>
+              <div class="avatar-placeholder" style="width:28px;height:28px;font-size:.6rem;border-radius:50%;background:rgba(16,185,129,.3);color:#fff;border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:700;margin-left:-6px;">MR</div>
+            </div>
+            <span style="color:rgba(255,255,255,.5);font-size:.8rem;">3 members</span>
+            <span class="badge" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2);">65% complete</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:var(--space-3);position:relative;z-index:1;flex-wrap:wrap;">
+          <a href="../editor/index.html" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2);"> Editor</a>
+          <a href="../contributions/index.html" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2);"> Contributions</a>
+          <button class="btn btn-primary btn-sm" data-modal-open="addTaskModal">+ Add Task</button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs-line mb-6" data-tabs id="wsTabs">
+        <div class="tab-line-item active" data-tab="kanban"> Kanban Board</div>
+        <div class="tab-line-item" data-tab="milestones"> Milestones</div>
+        <div class="tab-line-item" data-tab="files"> Files</div>
+        <div class="tab-line-item" data-tab="members"> Members</div>
+      </div>
+
+      <!-- Kanban tab -->
+      <div data-tab-panel="kanban">
+        <div class="kanban-board" id="kanbanBoard"></div>
+      </div>
+
+      <!-- Milestones tab -->
+      <div data-tab-panel="milestones" style="display:none;">
+        <div class="workspace-layout" style="grid-template-columns:1fr 300px;">
+          <div class="card">
+            <div class="card-title mb-5"> Project Milestones</div>
+            <div id="milestoneList"></div>
+          </div>
+          <div class="chat-panel">
+            <div class="chat-header"> Team Chat</div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input-wrap">
+              <input id="chatInput" placeholder="Type a message…" onkeydown="sendMsg(event)">
+              <button class="btn btn-primary btn-sm btn-icon" onclick="sendMsgBtn()" style="padding: 6px 12px; display: inline-flex; align-items: center; justify-content: center;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14" style="stroke: #fff;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Files tab -->
+      <div data-tab-panel="files" style="display:none;">
+        <div class="card">
+          <div class="card-header"><div class="card-title"> Shared Files</div><button class="btn btn-primary btn-sm" onclick="Toast.show('File upload coming in PHP backend phase!','info')"> Upload File</button></div>
+          <div class="upload-zone mb-6" onclick="Toast.show('Drag & drop file upload — ready for backend!','info')">
+            <div class="upload-icon" style="display:flex;align-items:center;justify-content:center;margin-bottom:var(--space-3);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" width="36" height="36" style="opacity:0.85;"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg></div>
+            <div style="font-weight:600;margin-bottom:4px;">Drop files here or click to upload</div>
+            <div style="font-size:.8rem;color:var(--text-muted);">PDF, DOCX, CSV, ZIP, PNG — Max 50MB</div>
+          </div>
+          <div id="fileList"></div>
+        </div>
+      </div>
+
+      <!-- Members tab -->
+      <div data-tab-panel="members" style="display:none;">
+        <div class="card">
+          <div class="card-header"><div class="card-title"> Team Members</div><button class="btn btn-outline btn-sm" onclick="Toast.show('Invite link copied!','success')"> Invite Member</button></div>
+          <div id="memberList"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Add Task Modal -->
+<div class="modal-overlay" id="addTaskModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title"> Add New Task</div><span class="modal-close" data-modal-close="addTaskModal">&times;</span></div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+      <div class="form-group"><label class="form-label">Task Title</label><input class="form-input" placeholder="What needs to be done?"></div>
+      <div class="form-group"><label class="form-label">Priority</label><select class="form-input"><option> High</option><option> Medium</option><option> Low</option></select></div>
+      <div class="form-group"><label class="form-label">Assign To</label><select class="form-input"><option>Rafsan Ahmed (You)</option><option>Rakibul Islam</option><option>Maliha Rahman</option></select></div>
+      <div class="form-group"><label class="form-label">Due Date</label><input class="form-input" type="date"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-modal-close="addTaskModal">Cancel</button>
+      <button class="btn btn-primary" onclick="addTask()">Add Task</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+document.getElementById('sidebarMount').outerHTML = buildSidebar('projects');
+document.getElementById('topbarMount').outerHTML  = buildTopbar('Project Workspace','projects');
+Tabs.init('[data-tabs]');
+
+// Build Kanban
+const cols = [
+  {key:'todo',    label:' To Do',     cls:'kanban-todo'},
+  {key:'inProgress',label:' In Progress',cls:'kanban-inprog'},
+  {key:'done',    label:' Done',       cls:'kanban-done'},
+];
+const kb = document.getElementById('kanbanBoard');
+cols.forEach(col => {
+  const tasks = DATA.tasks[col.key];
+  const cards = tasks.map(t => {
+    const s = DATA.getStudent(t.assignee);
+    return `<div class="kanban-card priority-${t.priority}" draggable="true">
+      <div style="font-weight:600;font-size:.875rem;margin-bottom:var(--space-2);">${t.title}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:.75rem;color:var(--text-muted);">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div class="avatar-placeholder" style="width:20px;height:20px;font-size:.55rem;border-radius:50%;background:var(--accent-glow);color:var(--accent);">${s.initials}</div>
+          <span>${s.name.split(' ')[0]}</span>
+        </div>
+        <span class="badge badge-${DATA.priorityColor[t.priority]}">${t.priority}</span>
+      </div>
+      <div style="font-size:.72rem;color:var(--text-muted);margin-top:var(--space-2);"> ${t.due}</div>
+    </div>`;
+  }).join('');
+  kb.innerHTML += `<div class="kanban-col ${col.cls}">
+    <div class="kanban-col-header">
+      <div class="kanban-col-title">${col.label} <span class="badge badge-muted">${tasks.length}</span></div>
+    </div>
+    ${cards}
+    <button class="add-task-btn" data-modal-open="addTaskModal">+ Add Task</button>
+  </div>`;
+});
+Modal.init();
+
+// Milestones
+const ml = document.getElementById('milestoneList');
+if(ml){
+  const milestones=[
+    {title:'Project Setup & Literature Review',date:'Apr 20',status:'done'},
+    {title:'Data Collection & Preprocessing',date:'May 10',status:'done'},
+    {title:'Baseline Model Training',date:'May 30',status:'current'},
+    {title:'Model Evaluation & Fine-tuning',date:'Jun 15',status:'upcoming'},
+    {title:'Paper Writing & Submission',date:'Jun 30',status:'upcoming'},
+  ];
+  milestones.forEach(m=>{
+    ml.innerHTML+=`<div class="milestone-item">
+      <div class="milestone-dot ${m.status}"></div>
+      <div style="flex:1;"><div style="font-weight:500;font-size:.9rem;">${m.title}</div><div style="font-size:.75rem;color:var(--text-muted);">Due ${m.date}</div></div>
+      <span class="badge badge-${m.status==='done'?'green':m.status==='current'?'accent':'muted'}">${m.status==='done'?' Done':m.status==='current'?' Active':'⏳ Upcoming'}</span>
+    </div>`;
+  });
+}
+
+// Chat
+const chatMsgs = [
+  {from:'Rakibul',initials:'RI',text:'Hey team! The model baseline is performing at 78% accuracy ',time:'2:30 PM',sent:false},
+  {from:'You',initials:'RA',text:"That's great! Let's try data augmentation next to push it higher.",time:'2:32 PM',sent:true},
+  {from:'Maliha',initials:'MR',text:'I found a new dataset from NIH — 50k chest X-rays. Uploading now!',time:'2:35 PM',sent:false},
+];
+const cm = document.getElementById('chatMessages');
+if(cm){ chatMsgs.forEach(m=>{ cm.innerHTML+=`<div style="display:flex;flex-direction:column;align-items:${m.sent?'flex-end':'flex-start'};gap:4px;">${!m.sent?`<div style="font-size:.7rem;color:var(--text-muted);">${m.from}</div>`:''}<div class="chat-bubble ${m.sent?'sent':'received'}">${m.text}</div><div class="chat-time">${m.time}</div></div>`; }); cm.scrollTop=cm.scrollHeight; }
+
+function sendMsg(e){ if(e.key==='Enter') sendMsgBtn(); }
+function sendMsgBtn(){
+  const inp = document.getElementById('chatInput');
+  if(!inp||!inp.value.trim()) return;
+  const cm2 = document.getElementById('chatMessages');
+  cm2.innerHTML+=`<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><div class="chat-bubble sent">${inp.value}</div><div class="chat-time">Just now</div></div>`;
+  inp.value=''; cm2.scrollTop=cm2.scrollHeight;
+}
+
+// Files
+const fl = document.getElementById('fileList');
+if(fl){
+  const files=[
+    {name:'literature_review.pdf',size:'2.1 MB',by:'Rafsan Ahmed',date:'Apr 15'},
+    {name:'chest_xray_preprocessing.ipynb',size:'450 KB',by:'Rakibul Islam',date:'Apr 22'},
+    {name:'baseline_model_v1.pkl',size:'38 MB',by:'Rakibul Islam',date:'May 12'},
+    {name:'dataset_split_80_20.csv',size:'1.4 MB',by:'Maliha Rahman',date:'May 5'},
+  ];
+  files.forEach(f=>{
+    fl.innerHTML+=`<div style="display:flex;align-items:center;gap:var(--space-4);padding:var(--space-3);border:1px solid var(--border-card);border-radius:var(--radius-md);margin-bottom:var(--space-2);transition:all var(--dur-fast);" onmouseover="this.style.borderColor='var(--border-hover)'" onmouseout="this.style.borderColor='var(--border-card)'">
+      <span style="display: flex; align-items: center; justify-content: center; color: var(--accent);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
+      <div style="flex:1;"><div style="font-weight:500;font-size:.9rem;">${f.name}</div><div style="font-size:.75rem;color:var(--text-muted);">${f.size} · Uploaded by ${f.by} · ${f.date}</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="Toast.show('Downloading ${f.name}…','info')" style="padding: 6px 10px; display: inline-flex; align-items: center; justify-content: center;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+    </div>`;
+  });
+}
+
+// Members
+const memberListEl = document.getElementById('memberList');
+if(memberListEl){
+  DATA.projects[0].members.forEach(id=>{
+    const s=DATA.getStudent(id);
+    memberListEl.innerHTML+=`<div class="member-item">
+      <div class="avatar-placeholder avatar-md ${s.color||'accent'}" style="width:44px;height:44px;">${s.initials}</div>
+      <div class="member-info"><div class="member-name">${s.name}</div><div class="member-role">${s.department} · ${s.year}</div></div>
+      <span class="badge badge-${id===1?'accent':'muted'}">${id===1?'Project Lead':'Member'}</span>
+      <div class="online-dot" style="${s.status!=='online'?'background:var(--text-muted);box-shadow:none;':''}"></div>
+    </div>`;
+  });
+}
+
+function addTask(){ Modal.close('addTaskModal'); Toast.show('Task added to the board!','success'); }
+</script>
+</body>
+</html>

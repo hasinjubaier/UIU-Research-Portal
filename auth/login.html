@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In — UIU Research Portal</title>
+<link rel="stylesheet" href="../assets/css/global.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<style>
+.auth-page { min-height:100vh; display:flex; }
+.auth-left {
+  flex:1; background:linear-gradient(135deg,var(--primary) 0%,#1a2080 50%,#2d1b69 100%);
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:var(--space-12); position:relative; overflow:hidden;
+}
+@media(max-width:900px){.auth-left{display:none;}}
+.auth-left-content { position:relative; z-index:1; max-width:420px; }
+.auth-left h2 { color:#fff; font-size:2.2rem; margin-bottom:var(--space-4); }
+.auth-left p  { color:rgba(255,255,255,.7); line-height:1.7; }
+.auth-features { margin-top:var(--space-8); display:flex; flex-direction:column; gap:var(--space-4); }
+.auth-feature  { display:flex; align-items:center; gap:var(--space-3); color:rgba(255,255,255,.85); font-size:.9rem; }
+.auth-feature-icon { width:36px; height:36px; background:rgba(255,255,255,.1); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+.auth-right {
+  width:480px; min-height:100vh;
+  display:flex; flex-direction:column; justify-content:center; padding:var(--space-12) var(--space-10);
+  background:var(--bg-base);
+}
+@media(max-width:900px){.auth-right{width:100%;padding:var(--space-8) var(--space-6);}}
+.auth-logo { display:flex; align-items:center; gap:var(--space-3); margin-bottom:var(--space-10); font-family:'Space Grotesk',sans-serif; font-weight:700; }
+.auth-logo-icon { width:38px; height:38px; background:linear-gradient(135deg,var(--accent),var(--purple)); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; }
+.auth-title { font-size:1.8rem; margin-bottom:var(--space-2); }
+.auth-subtitle { color:var(--text-secondary); font-size:.9rem; margin-bottom:var(--space-8); }
+
+.auth-form { display:flex; flex-direction:column; gap:var(--space-5); }
+.divider-text { display:flex; align-items:center; gap:var(--space-3); color:var(--text-muted); font-size:.8rem; }
+.divider-text::before,.divider-text::after { content:''; flex:1; height:1px; background:var(--border-card); }
+
+.auth-footer { text-align:center; margin-top:var(--space-6); font-size:.875rem; color:var(--text-secondary); }
+.auth-footer a { color:var(--accent); font-weight:600; }
+
+.floating-card {
+  background:rgba(255,255,255,.08); backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.12); border-radius:var(--radius-lg);
+  padding:var(--space-4) var(--space-5); margin-top:var(--space-6);
+  display:flex; align-items:center; gap:var(--space-3);
+  animation:float 4s ease-in-out infinite;
+}
+.floating-card-2 { animation-delay:-2s; margin-top:var(--space-3); }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="auth-page">
+  <!-- Left panel -->
+  <div class="auth-left">
+    <div class="hero-bg-orb blue"></div>
+    <div class="hero-bg-orb purple"></div>
+    <div class="auth-left-content">
+      <div class="section-label" style="color:rgba(255,255,255,.6);">United International University</div>
+      <h2>Welcome Back,<br>Researcher </h2>
+      <p>Continue your research journey. Your projects, collaborators, and resources are waiting for you.</p>
+      <div class="auth-features">
+        <div class="auth-feature">
+          <div class="auth-feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14" style="stroke: #fff;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </div>
+          Find research collaborators across all departments
+        </div>
+        <div class="auth-feature">
+          <div class="auth-feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14" style="stroke: #fff;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          Manage projects with a full workspace toolkit
+        </div>
+        <div class="auth-feature">
+          <div class="auth-feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14" style="stroke: #fff;"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+          </div>
+          Build reputation and earn achievement badges
+        </div>
+        <div class="auth-feature">
+          <div class="auth-feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14" style="stroke: #fff;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          Track your research contributions fairly
+        </div>
+      </div>
+      <div class="floating-card">
+        <div class="avatar-placeholder avatar-sm accent" style="width:36px;height:36px;">RI</div>
+        <div><div style="color:#fff;font-weight:600;font-size:.85rem;">Rakibul Islam joined your project!</div><div style="color:rgba(255,255,255,.5);font-size:.75rem;">Autonomous Drone Navigation · just now</div></div>
+      </div>
+      <div class="floating-card floating-card-2">
+        <span style="font-size:1.2rem; display:flex; align-items:center; color:#FFD700;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </span>
+        <div><div style="color:#fff;font-weight:600;font-size:.85rem;">You earned "Active Researcher" badge!</div><div style="color:rgba(255,255,255,.5);font-size:.75rem;">+100 reputation points · 2 min ago</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right panel -->
+  <div class="auth-right">
+    <div class="auth-logo">
+      <div class="auth-logo-icon" style="color:#fff; font-weight:800; font-size:1.15rem; font-family:'Inter',sans-serif; background:var(--primary); display:flex; align-items:center; justify-content:center;">R</div>
+      <span>UIU Research Portal</span>
+      <button class="btn btn-ghost btn-sm" onclick="ThemeManager.toggle()" style="margin-left:auto;"><span data-theme-icon></span></button>
+    </div>
+
+    <h2 class="auth-title">Sign in to your account</h2>
+    <p class="auth-subtitle">Use your UIU institutional email to continue</p>
+
+    <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="form-label" for="email">University Email</label>
+        <div class="input-icon-wrap">
+          <span class="input-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </span>
+          <input class="form-input" type="email" id="email" placeholder="yourname@uiu.ac.bd" autocomplete="email" required>
+        </div>
+        <span class="form-hint">Must be a valid @uiu.ac.bd address</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <div class="input-icon-wrap" style="position:relative;">
+          <span class="input-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </span>
+          <input class="form-input" type="password" id="password" placeholder="Enter your password" autocomplete="current-password" required>
+          <button type="button" onclick="togglePw()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;" id="pwToggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <label style="display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--text-secondary);cursor:pointer;">
+          <input type="checkbox" id="remember" style="accent-color:var(--accent);"> Remember me
+        </label>
+        <a href="#" style="font-size:.85rem;color:var(--accent);">Forgot password?</a>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg" id="loginBtn">Sign In</button>
+    </form>
+
+    <div class="divider-text" style="margin-top:var(--space-6);">or try the demo</div>
+    <button class="btn btn-ghost btn-block mt-3" onclick="demoLogin()" style="font-size:.875rem;">
+       Login as Demo Student (Rafsan Ahmed)
+    </button>
+
+    <div class="auth-footer">
+      Don't have an account? <a href="register.html">Create one free →</a>
+    </div>
+    <div class="auth-footer" style="margin-top:var(--space-3);">
+      <a href="../index.html" style="color:var(--text-muted);">← Back to Home</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+function togglePw() {
+  const pw = document.getElementById('password');
+  pw.type = pw.type === 'password' ? 'text' : 'password';
+}
+function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('email').value;
+  const btn = document.getElementById('loginBtn');
+  if (!email.endsWith('@uiu.ac.bd')) {
+    Toast.show('Please use your UIU email address (@uiu.ac.bd)', 'error');
+    return;
+  }
+  btn.innerHTML = '<span class="spinner"></span> Signing in…';
+  btn.disabled = true;
+  setTimeout(() => { window.location.href = '../dashboard/index.html'; }, 1200);
+}
+function demoLogin() {
+  const btn = event.target;
+  btn.innerHTML = '<span class="spinner"></span> Loading demo…';
+  btn.disabled = true;
+  setTimeout(() => { window.location.href = '../dashboard/index.html'; }, 1000);
+}
+</script>
+</body>
+</html>

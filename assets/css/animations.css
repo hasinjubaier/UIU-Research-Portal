@@ -1,0 +1,109 @@
+/* ============================================================
+   UIU Research Portal — Animations
+   Minimal, professional
+   ============================================================ */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/*  Utility classes  */
+.animate-fadeIn   { animation: fadeIn var(--dur-mid) var(--ease) both; }
+.animate-fadeInUp { animation: fadeInUp var(--dur-slow) var(--ease) both; }
+.animate-slideUp  { animation: slideUp var(--dur-mid) var(--ease-out) both; }
+.animate-scaleIn  { animation: scaleIn var(--dur-mid) var(--ease) both; }
+.animate-spin     { animation: spin 0.8s linear infinite; }
+.animate-pulse    { animation: pulse 2s ease-in-out infinite; }
+
+/* Staggered delays */
+.delay-1 { animation-delay: 80ms; }
+.delay-2 { animation-delay: 160ms; }
+.delay-3 { animation-delay: 240ms; }
+.delay-4 { animation-delay: 320ms; }
+.delay-5 { animation-delay: 400ms; }
+.delay-6 { animation-delay: 480ms; }
+
+/*  Hover lift  */
+.hover-lift {
+  transition: transform var(--dur-mid) var(--ease), box-shadow var(--dur-mid) var(--ease);
+}
+.hover-lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+/*  Scroll reveal  */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/*  Loading spinner  */
+.spinner {
+  width: 22px; height: 22px;
+  border: 2px solid var(--border-card);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+/*  Notification ping  */
+.ping-dot { position: relative; width: 8px; height: 8px; }
+.ping-dot::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: var(--red);
+}
+
+/*  Progress ring  */
+.ring-wrap { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+.ring-label { position: absolute; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 1rem; }
+
+/*  Page enter  */
+.page-enter { animation: fadeInUp 0.3s var(--ease-out) both; }
+
+/*  Skeleton  */
+@keyframes skelShimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+/*  Chart.js  */
+canvas { max-width: 100%; }

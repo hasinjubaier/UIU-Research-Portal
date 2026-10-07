@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contribution Tracking — UIU Research Portal</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="../assets/css/global.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<style>
+.contrib-grid { display:grid;grid-template-columns:1fr 1fr;gap:var(--space-6); }
+@media(max-width:900px){.contrib-grid{grid-template-columns:1fr;}}
+.member-contrib-card { background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-xl);padding:var(--space-6);transition:all var(--dur-mid); }
+.member-contrib-card:hover { border-color:var(--border-hover); }
+.contrib-stat { display:flex;flex-direction:column;align-items:center;background:var(--bg-surface);border-radius:var(--radius-md);padding:var(--space-3); }
+.contrib-stat-num { font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:1.4rem; }
+.contrib-stat-lbl { font-size:.7rem;color:var(--text-muted);margin-top:2px; }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="app-shell">
+  <div id="sidebarMount"></div>
+  <div class="main-content">
+    <div id="topbarMount"></div>
+    <div class="page-content page-enter">
+
+      <div class="page-header">
+        <h2>Contribution Tracking</h2>
+        <p>Fair and transparent tracking of every team member's contributions</p>
+      </div>
+
+      <!-- Project selector -->
+      <div style="display:flex;align-items:center;gap:var(--space-4);margin-bottom:var(--space-6);flex-wrap:wrap;">
+        <select class="form-input" style="width:auto;max-width:360px;">
+          <option>AI-Based Healthcare Diagnosis</option>
+          <option>Smart Campus Navigation App</option>
+          <option>Blockchain Credential Verification</option>
+        </select>
+        <span class="badge badge-green">Active Project</span>
+      </div>
+
+      <!-- Summary stats -->
+      <div class="stats-row mb-8">
+        <div class="stat-card">
+          <div class="stat-card-icon accent">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="104">0</div>
+          <div class="stat-label">Total Edits</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="25">0</div>
+          <div class="stat-label">Files Uploaded</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="36">0</div>
+          <div class="stat-label">Tasks Completed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="61">0</div>
+          <div class="stat-label">Comments Made</div>
+        </div>
+      </div>
+
+      <div class="contrib-grid">
+        <!-- Bar chart -->
+        <div class="card" style="display: flex; flex-direction: column;">
+          <div class="card-title mb-4">Overall Contribution Score</div>
+          <div style="position: relative; height: 260px; width: 100%;">
+            <canvas id="contribBarChart"></canvas>
+          </div>
+        </div>
+        <!-- Pie chart -->
+        <div class="card" style="display: flex; flex-direction: column;">
+          <div class="card-title mb-4">Contribution Distribution</div>
+          <div style="position: relative; height: 260px; width: 100%;">
+            <canvas id="contribPieChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Member breakdown -->
+      <div class="card mt-6">
+        <div class="card-title mb-5">Member-by-Member Breakdown</div>
+        <div style="display:flex;flex-direction:column;gap:var(--space-5);" id="memberBreakdown"></div>
+      </div>
+
+      <!-- Activity timeline -->
+      <div class="card mt-6">
+        <div class="card-title mb-5">Recent Contributions</div>
+        <div id="contribTimeline"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="toast-container"></div>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+document.getElementById('sidebarMount').outerHTML = buildSidebar('contributions');
+document.getElementById('topbarMount').outerHTML  = buildTopbar('Contribution Tracking','contributions');
+
+const members = DATA.contributions.members.map(c => {
+  const s = DATA.getStudent(c.studentId);
+  return { ...c, student: s };
+});
+const names  = members.map(m => m.student.name.split(' ')[0]);
+const scores = members.map(m => m.score);
+const colors = ['rgba(79,142,247,0.8)','rgba(124,58,237,0.8)','rgba(16,185,129,0.8)'];
+
+// Bar chart
+new Chart(document.getElementById('contribBarChart'), {
+  type: 'bar',
+  data: {
+    labels: names,
+    datasets: [{ label: 'Score', data: scores, backgroundColor: colors, borderRadius: 8, borderSkipped: false }]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{min:0,max:100,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#8B96B5'}},x:{grid:{display:false},ticks:{color:'#8B96B5'}}} }
+});
+
+// Pie chart
+new Chart(document.getElementById('contribPieChart'), {
+  type: 'doughnut',
+  data: {
+    labels: names,
+    datasets: [{ data: scores, backgroundColor: colors.map(c=>c.replace('0.8','0.9')), borderWidth: 3, borderColor: 'var(--bg-card)' }]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom',labels:{color:'#8B96B5',padding:8}}} }
+});
+
+// Member breakdown
+const mb = document.getElementById('memberBreakdown');
+members.forEach(m => {
+  mb.innerHTML += `
+  <div class="member-contrib-card">
+    <div style="display:flex;align-items:center;gap:var(--space-4);margin-bottom:var(--space-4);">
+      <div class="avatar-placeholder avatar-md ${m.student.color||'accent'}" style="width:48px;height:48px;">${m.student.initials}</div>
+      <div style="flex:1;">
+        <div style="font-weight:700;">${m.student.name}</div>
+        <div style="font-size:.8rem;color:var(--text-muted);">${m.student.department}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:1.5rem;color:var(--accent);">${m.score}</div>
+        <div style="font-size:.7rem;color:var(--text-muted);">Score</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3);margin-bottom:var(--space-4);">
+      <div class="contrib-stat"><div class="contrib-stat-num text-accent">${m.edits}</div><div class="contrib-stat-lbl">Edits</div></div>
+      <div class="contrib-stat"><div class="contrib-stat-num text-green">${m.uploads}</div><div class="contrib-stat-lbl">Uploads</div></div>
+      <div class="contrib-stat"><div class="contrib-stat-num text-orange">${m.tasks}</div><div class="contrib-stat-lbl">Tasks</div></div>
+      <div class="contrib-stat"><div class="contrib-stat-num" style="color:var(--purple);">${m.comments}</div><div class="contrib-stat-lbl">Comments</div></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${m.score}%"></div></div>
+  </div>`;
+});
+
+// Timeline
+const timeline = [
+  {who:'Rakibul Islam',action:'Uploaded baseline_model_v2.pkl',type:'upload',time:'2 hours ago'},
+  {who:'Rafsan Ahmed',action:'Completed task: Implement DICOM reader',type:'task',time:'4 hours ago'},
+  {who:'Maliha Rahman',action:'Uploaded chest_xray_split.csv',type:'upload',time:'6 hours ago'},
+  {who:'Rafsan Ahmed',action:'Made 12 edits to research_paper_draft.docx',type:'edit',time:'Yesterday'},
+  {who:'Maliha Rahman',action:'Added comment on baseline results',type:'comment',time:'Yesterday'},
+];
+const ct = document.getElementById('contribTimeline');
+timeline.forEach(t=>{
+  const icons={
+    upload: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`,
+    task: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
+    edit: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`,
+    comment: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`
+  };
+  const colors2={upload:'green',task:'accent',edit:'purple',comment:'orange'};
+  ct.innerHTML+=`<div class="activity-item"><div class="activity-icon" style="background:var(--${colors2[t.type]}-glow); color:var(--${colors2[t.type]}); display:flex; align-items:center; justify-content:center;">${icons[t.type]}</div><div class="activity-text"><strong>${t.who}</strong> ${t.action}</div><div class="activity-time">${t.time}</div></div>`;
+});
+</script>
+</body>
+</html>

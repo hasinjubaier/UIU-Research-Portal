@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — UIU Research Portal</title>
+<link rel="stylesheet" href="../assets/css/global.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<style>
+.project-card { background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-xl);padding:var(--space-6);transition:all var(--dur-mid) var(--ease);display:flex;flex-direction:column;gap:var(--space-4); }
+.project-card:hover { border-color:var(--border-hover);box-shadow:var(--shadow-accent);transform:translateY(-3px); }
+.project-domain-bar { height:4px;border-radius:2px;margin-bottom:var(--space-2);background:var(--gradient,linear-gradient(90deg,var(--accent),var(--purple))); }
+.project-title { font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.05rem; }
+.project-desc  { font-size:.85rem;color:var(--text-secondary);line-height:1.6; }
+.project-meta  { display:flex;align-items:center;gap:var(--space-4);font-size:.8rem;color:var(--text-muted);flex-wrap:wrap; }
+.project-members { display:flex;align-items:center; }
+.project-members .avatar-placeholder { margin-right:-8px;border:2px solid var(--bg-card); }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="app-shell">
+  <div id="sidebarMount"></div>
+  <div class="main-content">
+    <div id="topbarMount"></div>
+    <div class="page-content page-enter">
+
+      <div class="page-header">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);">
+          <div>
+            <h2>Research Projects</h2>
+            <p>Manage your projects and workspaces</p>
+          </div>
+          <button class="btn btn-primary" data-modal-open="newProjectModal">New Project</button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs mb-6" data-tabs>
+        <div class="tab-item active" data-tab="all">All Projects</div>
+        <div class="tab-item" data-tab="active">Active</div>
+        <div class="tab-item" data-tab="completed">Completed</div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="stats-row mb-8">
+        <div class="stat-card">
+          <div class="stat-card-icon accent">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="4">0</div>
+          <div class="stat-label">Total Projects</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="3">0</div>
+          <div class="stat-label">Active</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="1">0</div>
+          <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="17" height="17">
+              <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+          </div>
+          <div class="stat-number" data-count="20">0</div>
+          <div class="stat-label">Open Tasks</div>
+        </div>
+      </div>
+
+      <!-- Project grid -->
+      <div class="grid-2" id="projectGrid"></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- New Project Modal -->
+<div class="modal-overlay" id="newProjectModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title">Create New Project</div>
+      <span class="modal-close" data-modal-close="newProjectModal">&times;</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-5);">
+      <div class="form-group" style="grid-column:1/-1;">
+        <label class="form-label">Project Title</label>
+        <input class="form-input" placeholder="Give your project a clear title">
+      </div>
+      <div class="form-group" style="grid-column:1/-1;">
+        <label class="form-label">Description</label>
+        <textarea class="form-input" placeholder="What is this project about?"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Domain</label>
+        <select class="form-input">
+          <option>AI / Machine Learning</option><option>Web Development</option><option>IoT</option>
+          <option>Blockchain</option><option>Data Science</option><option>NLP</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Visibility</label>
+        <select class="form-input"><option>Private (Team Only)</option><option>Public (UIU Community)</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Deadline</label>
+        <input class="form-input" type="date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Team Size (max)</label>
+        <input class="form-input" type="number" value="5" min="2" max="20">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-modal-close="newProjectModal">Cancel</button>
+      <button class="btn btn-primary" onclick="createProject()">Create Project</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+document.getElementById('sidebarMount').outerHTML = buildSidebar('projects');
+document.getElementById('topbarMount').outerHTML  = buildTopbar('Projects','projects');
+
+const gradients = [
+  'linear-gradient(90deg,var(--accent),var(--purple))',
+  'linear-gradient(90deg,var(--purple),var(--teal))',
+  'linear-gradient(90deg,var(--teal),var(--green))',
+  'linear-gradient(90deg,var(--orange),var(--red))',
+];
+
+function renderProjects(list) {
+  const grid = document.getElementById('projectGrid');
+  grid.innerHTML = '';
+  list.forEach((p,i) => {
+    const members = p.members.map(id=>{const s=DATA.getStudent(id);return `<div class="avatar-placeholder" style="width:28px;height:28px;font-size:.65rem;border-radius:50%;background:var(--accent-glow);color:var(--accent);border:2px solid var(--bg-card);display:flex;align-items:center;justify-content:center;font-weight:700;">${s.initials}</div>`;}).join('');
+    grid.innerHTML += `
+    <div class="project-card reveal delay-${i%4}">
+      <div class="project-domain-bar" style="background:${gradients[i%gradients.length]};"></div>
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-2);">
+          <span class="badge badge-${p.status==='completed'?'green':'accent'}">${p.status==='completed'?' Completed':' Active'}</span>
+          <span style="font-size:.75rem;color:var(--text-muted);">${p.visibility==='private'?' Private':' Public'}</span>
+        </div>
+        <div class="project-title">${p.title}</div>
+        <div class="project-desc mt-2">${p.description}</div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        ${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--text-muted);margin-bottom:6px;">
+          <span>Progress</span><span>${p.progress}%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${p.progress}%"></div></div>
+      </div>
+      <div class="project-meta">
+        <span> ${p.tasks.todo+p.tasks.inProgress} tasks</span>
+        <span> ${p.files} files</span>
+        <span> Due ${new Date(p.deadline).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;">
+        <div class="project-members" style="display:flex;">${members}</div>
+        <a href="workspace.html" class="btn btn-primary btn-sm">Open Workspace →</a>
+      </div>
+    </div>`;
+  });
+  ScrollReveal.init();
+}
+
+renderProjects(DATA.projects);
+
+// Tab filtering
+document.querySelectorAll('.tab-item').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    const t = tab.dataset.tab;
+    if(t==='all') renderProjects(DATA.projects);
+    else renderProjects(DATA.projects.filter(p=>p.status===t));
+  });
+});
+
+function createProject() {
+  Modal.close('newProjectModal');
+  Toast.show('Project created successfully! Redirecting to workspace…','success');
+  setTimeout(()=>window.location.href='workspace.html', 1000);
+}
+</script>
+</body>
+</html>

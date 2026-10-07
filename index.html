@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UIU Research Portal — Academic Research Collaboration Platform</title>
+<meta name="description" content="The centralized research collaboration platform for United International University students. Find collaborators, manage projects, share resources, and build your academic portfolio.">
+<link rel="stylesheet" href="assets/css/global.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<style>
+/*  Navigation  */
+.landing-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center;
+  padding: 0 var(--space-8);
+  height: 60px;
+  background: #fff;
+  border-bottom: 1px solid var(--border-card);
+  box-shadow: 0 1px 3px rgba(60,30,0,0.06);
+}
+[data-theme="dark"] .landing-nav { background: var(--bg-card); }
+
+.nav-logo {
+  display: flex; align-items: center; gap: var(--space-3);
+  font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.95rem;
+  color: var(--text-primary);
+}
+.nav-logo-icon {
+  width: 32px; height: 32px;
+  background: var(--primary);
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-family: 'Inter', sans-serif;
+  font-weight: 800; font-size: 0.85rem;
+}
+.nav-links { display: flex; gap: var(--space-8); margin: 0 auto; }
+.nav-links a {
+  font-size: 0.875rem; font-weight: 500;
+  color: var(--text-secondary);
+  transition: color var(--dur-fast);
+}
+.nav-links a:hover { color: var(--primary); }
+.nav-actions { display: flex; gap: var(--space-3); align-items: center; }
+.theme-btn {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-card);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all var(--dur-fast);
+}
+.theme-btn:hover { border-color: var(--primary); color: var(--primary); }
+@media(max-width: 768px) { .nav-links { display: none; } }
+
+/*  Hero  */
+.hero {
+  padding: 100px var(--space-6) var(--space-16);
+  background: #fff;
+  border-bottom: 1px solid var(--border-card);
+}
+[data-theme="dark"] .hero { background: var(--bg-card); }
+
+.hero-grid {
+  max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+}
+@media(max-width: 840px) { .hero-grid { grid-template-columns: 1fr; gap: var(--space-10); } }
+
+/* Left: text */
+.hero-eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--primary); margin-bottom: var(--space-4);
+}
+.hero h1 {
+  font-size: clamp(1.9rem, 3.8vw, 2.9rem);
+  color: var(--text-primary);
+  margin-bottom: var(--space-5);
+  line-height: 1.22;
+}
+.hero h1 span { color: var(--primary); }
+.hero-desc {
+  font-size: 1rem; line-height: 1.75;
+  color: var(--text-secondary);
+  max-width: 440px;
+  margin-bottom: var(--space-7);
+}
+.hero-cta { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+.hero-note { margin-top: var(--space-4); font-size: 0.78rem; color: var(--text-muted); font-family: 'Inter', sans-serif; }
+
+/* Right: preview card */
+.hero-preview {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+}
+[data-theme="dark"] .hero-preview { background: var(--bg-surface); }
+
+.preview-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: var(--space-4);
+}
+.proj-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+  box-shadow: var(--shadow-xs);
+}
+.proj-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-3); }
+.proj-name { font-weight: 600; font-size: 0.88rem; color: var(--text-primary); font-family: 'Inter', sans-serif; }
+.proj-meta { font-size: 0.73rem; color: var(--text-muted); margin-top: 2px; }
+.proj-prog-row { display: flex; justify-content: space-between; font-size: 0.73rem; color: var(--text-muted); margin-bottom: var(--space-2); }
+.proj-avatars { display: flex; margin-top: var(--space-3); }
+.proj-av {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 2px solid var(--bg-card);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem; font-weight: 700;
+  margin-left: -5px;
+  font-family: 'Inter', sans-serif;
+  color: #fff;
+}
+.proj-av:first-child { margin-left: 0; }
+.av-o { background: var(--primary); }
+.av-p { background: #6D28D9; }
+.av-g { background: var(--green); }
+.av-a { background: var(--amber); }
+
+.preview-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3); margin-top: var(--space-4);
+}
+.pstat {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  text-align: center;
+}
+.pstat-num { font-size: 1.25rem; font-weight: 700; color: var(--primary); font-family: 'Inter', sans-serif; }
+.pstat-lbl { font-size: 0.68rem; color: var(--text-muted); margin-top: 2px; font-family: 'Inter', sans-serif; }
+
+/*  Divider bar  */
+.info-bar {
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border-card);
+  border-bottom: 1px solid var(--border-card);
+  padding: var(--space-5) 0;
+}
+.info-bar-inner {
+  max-width: 1100px; margin: 0 auto; padding: 0 var(--space-6);
+  display: flex; gap: var(--space-10); flex-wrap: wrap;
+}
+.info-item { display: flex; align-items: center; gap: var(--space-3); }
+.info-icon {
+  width: 32px; height: 32px;
+  background: var(--primary-glow);
+  border: 1px solid rgba(217,95,0,0.18);
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.info-icon svg { stroke: var(--primary); }
+.info-text { font-size: 0.82rem; color: var(--text-secondary); font-family: 'Inter', sans-serif; }
+.info-text strong { color: var(--text-primary); font-weight: 600; display: block; }
+
+/*  Features  */
+.features-section {
+  padding: var(--space-16) 0;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-card);
+}
+.sec-head { text-align: center; margin-bottom: var(--space-10); }
+.sec-head h2 { margin-bottom: var(--space-3); }
+.sec-head p { max-width: 500px; margin: 0 auto; font-size: 0.93rem; }
+
+.feat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+.feat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  transition: all var(--dur-mid) var(--ease);
+  box-shadow: var(--shadow-xs);
+}
+.feat-card:hover {
+  border-color: rgba(217,95,0,0.25);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+.feat-num {
+  width: 32px; height: 32px;
+  background: var(--primary);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.8rem;
+  color: #fff;
+  margin-bottom: var(--space-3);
+  flex-shrink: 0;
+}
+.feat-title { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.93rem; margin-bottom: var(--space-2); color: var(--text-primary); }
+.feat-desc  { font-size: 0.83rem; color: var(--text-secondary); line-height: 1.65; }
+
+/*  Steps  */
+.steps-section {
+  padding: var(--space-16) 0;
+  background: #fff;
+  border-bottom: 1px solid var(--border-card);
+}
+[data-theme="dark"] .steps-section { background: var(--bg-card); }
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: var(--space-6);
+  margin-top: var(--space-10);
+  counter-reset: step;
+}
+.step-card { text-align: center; }
+.step-num {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Inter', sans-serif; font-weight: 700; font-size: 1rem;
+  color: #fff; margin: 0 auto var(--space-4);
+  border: 3px solid var(--bg-base);
+  box-shadow: 0 2px 8px rgba(217,95,0,0.22);
+}
+[data-theme="dark"] .step-num { border-color: var(--bg-card); }
+.step-title { font-weight: 600; font-size: 0.88rem; margin-bottom: var(--space-2); color: var(--text-primary); font-family: 'Inter', sans-serif; }
+.step-desc  { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.6; }
+
+/*  Community  */
+.community-section {
+  padding: var(--space-16) 0;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-card);
+}
+.sec-row { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4); margin-bottom: var(--space-8); }
+
+/*  CTA  */
+.cta-section { padding: var(--space-16) 0; background: #fff; }
+[data-theme="dark"] .cta-section { background: var(--bg-card); }
+.cta-inner {
+  max-width: 660px; margin: 0 auto; text-align: center;
+  background: var(--primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-12) var(--space-8);
+}
+.cta-inner h2 { color: #fff; margin-bottom: var(--space-4); font-size: clamp(1.4rem,2.5vw,1.9rem); }
+.cta-inner p  { color: rgba(255,255,255,0.82); margin-bottom: var(--space-6); font-size: 0.93rem; max-width: 460px; margin-left: auto; margin-right: auto; }
+.cta-btns { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; }
+.btn-white {
+  background: #fff; color: var(--primary);
+  border: 1.5px solid #fff;
+  padding: 9px 22px; border-radius: var(--radius-md);
+  font-weight: 600; font-size: 0.875rem;
+  font-family: 'Inter', sans-serif;
+  transition: all var(--dur-mid);
+  display: inline-flex; align-items: center; gap: var(--space-2);
+}
+.btn-white:hover { background: transparent; color: #fff; }
+.btn-clear {
+  background: transparent; color: rgba(255,255,255,0.88);
+  border: 1.5px solid rgba(255,255,255,0.4);
+  padding: 9px 22px; border-radius: var(--radius-md);
+  font-weight: 600; font-size: 0.875rem;
+  font-family: 'Inter', sans-serif;
+  transition: all var(--dur-mid);
+  display: inline-flex; align-items: center; gap: var(--space-2);
+}
+.btn-clear:hover { border-color: rgba(255,255,255,0.8); color: #fff; }
+
+/*  Footer  */
+footer {
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border-card);
+  padding: var(--space-8) 0 var(--space-6);
+}
+.footer-body {
+  max-width: 1140px; margin: 0 auto; padding: 0 var(--space-6);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: var(--space-5);
+}
+.footer-brand { display: flex; align-items: center; gap: var(--space-3); }
+.footer-brand-text { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.88rem; color: var(--text-primary); }
+.footer-brand-sub  { font-size: 0.7rem; color: var(--text-muted); }
+.footer-links { display: flex; gap: var(--space-5); flex-wrap: wrap; }
+.footer-links a { font-size: 0.82rem; color: var(--text-muted); transition: color var(--dur-fast); }
+.footer-links a:hover { color: var(--primary); }
+.footer-copy {
+  max-width: 1140px; margin: var(--space-5) auto 0;
+  padding: var(--space-4) var(--space-6) 0;
+  border-top: 1px solid var(--border-card);
+  font-size: 0.77rem; color: var(--text-muted);
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+
+<!-- Navigation -->
+<nav class="landing-nav">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">R</div>
+    UIU Research Portal
+  </div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how-it-works">How It Works</a>
+    <a href="#community">Community</a>
+  </div>
+  <div class="nav-actions">
+    <button class="theme-btn" onclick="ThemeManager.toggle()" aria-label="Toggle theme">
+      <span data-theme-icon></span>
+    </button>
+    <a href="auth/login.html" class="btn btn-ghost btn-sm">Sign In</a>
+    <a href="auth/register.html" class="btn btn-primary btn-sm">Register</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-grid">
+
+    <!-- Left column: text -->
+    <div class="animate-fadeInUp">
+      <div class="hero-eyebrow">United International University</div>
+      <h1>Research Collaboration <span>Made Simple</span></h1>
+      <p class="hero-desc">
+        Find teammates, manage your research projects, share datasets, and
+        build your academic profile — all in one place for UIU students.
+      </p>
+      <div class="hero-cta">
+        <a href="auth/register.html" class="btn btn-primary btn-lg">Get Started</a>
+        <a href="dashboard/index.html" class="btn btn-ghost btn-lg">View Demo</a>
+      </div>
+      <p class="hero-note">Free for all UIU students. Sign up with your UIU email address.</p>
+    </div>
+
+    <!-- Right column: live preview card -->
+    <div class="hero-preview animate-fadeInUp delay-2">
+      <div class="preview-label">Active Projects</div>
+
+      <div class="proj-card">
+        <div class="proj-row">
+          <div>
+            <div class="proj-name">Smart Traffic System using CV</div>
+            <div class="proj-meta">CSE Department &middot; 4 members</div>
+          </div>
+          <span class="badge badge-green">Active</span>
+        </div>
+        <div class="proj-prog-row"><span>Progress</span><span>68%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:68%;"></div></div>
+        <div class="proj-avatars">
+          <div class="proj-av av-o">AK</div>
+          <div class="proj-av av-p">SR</div>
+          <div class="proj-av av-g">MR</div>
+          <div class="proj-av av-a">NI</div>
+        </div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-row">
+          <div>
+            <div class="proj-name">Bangla NLP Sentiment Analysis</div>
+            <div class="proj-meta">EEE Department &middot; 3 members</div>
+          </div>
+          <span class="badge badge-accent">In Review</span>
+        </div>
+        <div class="proj-prog-row"><span>Progress</span><span>85%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:85%;"></div></div>
+        <div class="proj-avatars">
+          <div class="proj-av av-p">FA</div>
+          <div class="proj-av av-o">TH</div>
+          <div class="proj-av av-g">SN</div>
+        </div>
+      </div>
+
+      <div class="preview-stats">
+        <div class="pstat">
+          <div class="pstat-num">1,200+</div>
+          <div class="pstat-lbl">Students</div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-num">340</div>
+          <div class="pstat-lbl">Projects</div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-num">48</div>
+          <div class="pstat-lbl">Departments</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Info bar -->
+<div class="info-bar">
+  <div class="info-bar-inner">
+    <div class="info-item">
+      <div class="info-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" width="16" height="16">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="info-text"><strong>1,200+ Students</strong>Registered on the platform</div>
+    </div>
+    <div class="info-item">
+      <div class="info-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" width="16" height="16">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+        </svg>
+      </div>
+      <div class="info-text"><strong>340 Projects</strong>Ongoing research projects</div>
+    </div>
+    <div class="info-item">
+      <div class="info-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" width="16" height="16">
+          <ellipse cx="12" cy="5" rx="9" ry="3"/>
+          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+        </svg>
+      </div>
+      <div class="info-text"><strong>850+ Resources</strong>Papers, datasets and more</div>
+    </div>
+    <div class="info-item">
+      <div class="info-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" width="16" height="16">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
+      <div class="info-text"><strong>48 Departments</strong>Across all UIU faculties</div>
+    </div>
+  </div>
+</div>
+
+<!-- Features -->
+<section id="features" class="features-section">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="section-label">Platform Features</div>
+      <h2>Everything You Need to Research Together</h2>
+      <p>14 integrated modules built specifically for UIU's academic research community.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card reveal">
+        <div class="feat-num">01</div>
+        <div class="feat-title">Collaboration Finder</div>
+        <div class="feat-desc">Post your project idea and discover teammates filtered by department, skills, and research topic.</div>
+      </div>
+      <div class="feat-card reveal delay-1">
+        <div class="feat-num">02</div>
+        <div class="feat-title">Project Workspace</div>
+        <div class="feat-desc">Kanban boards, milestones, file sharing, and built-in chat — a complete project management tool.</div>
+      </div>
+      <div class="feat-card reveal delay-2">
+        <div class="feat-num">03</div>
+        <div class="feat-title">Research Editor</div>
+        <div class="feat-desc">Collaborative writing with version history, comments, and citation support in IEEE and APA formats.</div>
+      </div>
+      <div class="feat-card reveal delay-3">
+        <div class="feat-num">04</div>
+        <div class="feat-title">Resource Hub</div>
+        <div class="feat-desc">Upload and discover papers, PDFs, and study materials with recommendations based on your interests.</div>
+      </div>
+      <div class="feat-card reveal delay-4">
+        <div class="feat-num">05</div>
+        <div class="feat-title">Dataset Hub</div>
+        <div class="feat-desc">Share datasets, code, and experiment results with version control — a mini research GitHub for UIU.</div>
+      </div>
+      <div class="feat-card reveal delay-5">
+        <div class="feat-num">06</div>
+        <div class="feat-title">Messaging System</div>
+        <div class="feat-desc">Direct messages, project group chats, and discussion rooms for every research team.</div>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-num">07</div>
+        <div class="feat-title">Blog and Knowledge Sharing</div>
+        <div class="feat-desc">Publish research summaries and tutorials. Build your academic portfolio with every post.</div>
+      </div>
+      <div class="feat-card reveal delay-1">
+        <div class="feat-num">08</div>
+        <div class="feat-title">Contribution Tracking</div>
+        <div class="feat-desc">Automatically tracks edits, uploads, and task completions — resolving fairness issues in teamwork.</div>
+      </div>
+      <div class="feat-card reveal delay-2">
+        <div class="feat-num">09</div>
+        <div class="feat-title">Reputation and Leaderboard</div>
+        <div class="feat-desc">Earn points for completing projects, sharing resources, and helping peers. Climb the rankings.</div>
+      </div>
+      <div class="feat-card reveal delay-3">
+        <div class="feat-num">10</div>
+        <div class="feat-title">Innovation Hub</div>
+        <div class="feat-desc">Post research ideas, gather collaborators, and upvote innovations from the UIU community.</div>
+      </div>
+      <div class="feat-card reveal delay-4">
+        <div class="feat-num">11</div>
+        <div class="feat-title">Events and Opportunities</div>
+        <div class="feat-desc">Find hackathons, conferences, and competitions. Never miss an academic research opportunity.</div>
+      </div>
+      <div class="feat-card reveal delay-5">
+        <div class="feat-num">12</div>
+        <div class="feat-title">Security and Trust</div>
+        <div class="feat-desc">University email verification, public and private project control, and a community trust system.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section id="how-it-works" class="steps-section">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="section-label">How It Works</div>
+      <h2>From Idea to Published Research</h2>
+      <p>A simple five-step journey designed around how researchers actually work.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card reveal">
+        <div class="step-num">1</div>
+        <div class="step-title">Create Profile</div>
+        <div class="step-desc">Register with your UIU email and add your skills, research interests, and academic bio.</div>
+      </div>
+      <div class="step-card reveal delay-1">
+        <div class="step-num">2</div>
+        <div class="step-title">Find Collaborators</div>
+        <div class="step-desc">Browse or post a project idea to find teammates by department and skill set.</div>
+      </div>
+      <div class="step-card reveal delay-2">
+        <div class="step-num">3</div>
+        <div class="step-title">Work Together</div>
+        <div class="step-desc">Use the workspace to assign tasks, share files, chat, and co-author the research paper.</div>
+      </div>
+      <div class="step-card reveal delay-3">
+        <div class="step-num">4</div>
+        <div class="step-title">Share Resources</div>
+        <div class="step-desc">Upload datasets, code, and papers to the resource hubs for the wider community.</div>
+      </div>
+      <div class="step-card reveal delay-4">
+        <div class="step-num">5</div>
+        <div class="step-title">Build Your Portfolio</div>
+        <div class="step-desc">Publish blogs, earn reputation points, receive badges, and grow your academic standing.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Community Preview -->
+<section id="community" class="community-section">
+  <div class="container">
+    <div class="sec-row reveal">
+      <div>
+        <div class="section-label">Active Community</div>
+        <h2>Meet Your Future Research Partners</h2>
+      </div>
+      <a href="auth/register.html" class="btn btn-outline">See All Students</a>
+    </div>
+    <div class="grid-3" id="communityCards"></div>
+  </div>
+</section>
+
+<!-- CTA Banner -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-inner reveal">
+      <h2>Join 1,200+ UIU Researchers Already Collaborating</h2>
+      <p>Use your UIU email to get instant access to the full platform. It is completely free for all students.</p>
+      <div class="cta-btns">
+        <a href="auth/register.html" class="btn-white">Join with UIU Email</a>
+        <a href="dashboard/index.html" class="btn-clear">View Demo Dashboard</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-body">
+    <div class="footer-brand">
+      <div class="nav-logo-icon" style="width:28px;height:28px;font-size:0.78rem;">R</div>
+      <div>
+        <div class="footer-brand-text">UIU Research Portal</div>
+        <div class="footer-brand-sub">United International University</div>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="auth/register.html">Register</a>
+      <a href="auth/login.html">Sign In</a>
+      <a href="dashboard/index.html">Demo</a>
+    </div>
+  </div>
+  <p class="footer-copy">
+    &copy; 2025 United International University Research Portal. Built for UIU's academic community.
+  </p>
+</footer>
+
+<div class="toast-container"></div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+// Clear old theme preference so light mode loads fresh
+if (!localStorage.getItem('uiu-theme')) {
+  localStorage.setItem('uiu-theme', 'light');
+}
+
+// Render community cards
+const communityCards = document.getElementById('communityCards');
+if (communityCards && typeof DATA !== 'undefined') {
+  DATA.students.slice(0, 6).forEach(s => {
+    communityCards.innerHTML += `
+    <div class="card hover-lift reveal" style="display:flex;flex-direction:column;gap:var(--space-3);">
+      <div style="display:flex;align-items:center;gap:var(--space-3);">
+        <div class="avatar-placeholder avatar-md ${s.color}" style="width:42px;height:42px;font-size:0.88rem;">${s.initials}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:600;font-size:0.88rem;color:var(--text-primary);">${s.name}</div>
+          <div style="font-size:0.73rem;color:var(--text-muted);">${s.department} &middot; ${s.year}</div>
+        </div>
+        <div class="online-dot" style="${s.status !== 'online' ? 'background:var(--border-card);' : ''}"></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;">
+        ${s.skills.slice(0, 3).map(sk => `<span class="tag">${sk}</span>`).join('')}
+      </div>
+      <div style="font-size:0.8rem;color:var(--text-secondary);">${s.project}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:var(--space-3);border-top:1px solid var(--border-light);">
+        <span class="badge badge-accent">${s.reputation.toLocaleString()} pts</span>
+        <a href="auth/register.html" class="btn btn-ghost btn-sm">Connect</a>
+      </div>
+    </div>`;
+  });
+}
+</script>
+</body>
+</html>

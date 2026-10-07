@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — UIU Research Portal</title>
+<link rel="stylesheet" href="../assets/css/global.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<style>
+.blog-card { background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius-xl);overflow:hidden;transition:all var(--dur-mid) var(--ease);display:flex;flex-direction:column; }
+.blog-card:hover { border-color:var(--border-hover);box-shadow:var(--shadow-accent);transform:translateY(-3px); }
+.blog-card-img { height:160px;background:var(--grad,linear-gradient(135deg,var(--accent),var(--purple)));position:relative;display:flex;align-items:center;justify-content:center;font-size:3rem; }
+.blog-card-body { padding:var(--space-5);flex:1;display:flex;flex-direction:column;gap:var(--space-3); }
+.blog-title { font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
+.blog-excerpt { font-size:.85rem;color:var(--text-secondary);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
+.blog-meta { display:flex;align-items:center;gap:var(--space-3);font-size:.75rem;color:var(--text-muted);flex-wrap:wrap; }
+.blog-actions { display:flex;align-items:center;gap:var(--space-3);margin-top:auto; }
+.like-btn { background:none;border:none;cursor:pointer;font-size:.875rem;color:var(--text-muted);display:flex;align-items:center;gap:4px;transition:color var(--dur-fast); }
+.like-btn:hover,.like-btn.liked { color:var(--red); }
+.featured-blog { background:linear-gradient(135deg,rgba(79,142,247,.1),rgba(124,58,237,.1));border:1px solid var(--border-hover);border-radius:var(--radius-xl);padding:var(--space-8);margin-bottom:var(--space-8);position:relative;overflow:hidden; }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="app-shell">
+  <div id="sidebarMount"></div>
+  <div class="main-content">
+    <div id="topbarMount"></div>
+    <div class="page-content page-enter">
+
+      <div class="page-header">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);">
+          <div>
+
+            <h2>Blog & Knowledge Sharing</h2>
+            <p>Research summaries, tutorials, and ideas from the UIU community</p>
+          </div>
+          <button class="btn btn-primary" data-modal-open="writeBlogModal"> Write Blog Post</button>
+        </div>
+      </div>
+
+      <!-- Category tabs -->
+      <div class="tabs mb-6" data-tabs>
+        <div class="tab-item active" data-tab="all">All Posts</div>
+        <div class="tab-item" data-tab="Research Summary">Research</div>
+        <div class="tab-item" data-tab="Tutorial">Tutorials</div>
+        <div class="tab-item" data-tab="Opinion">Opinion</div>
+      </div>
+
+      <!-- Search -->
+      <div class="search-bar mb-6" style="max-width:480px;">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+        <input type="text" placeholder="Search blog posts…" id="blogSearch">
+      </div>
+
+      <!-- Featured post -->
+      <div class="featured-blog">
+        <div class="hero-bg-orb blue" style="opacity:.3;width:300px;height:300px;top:-100px;right:-60px;"></div>
+        <div style="position:relative;z-index:1;">
+          <span class="badge badge-orange mb-3"> Trending</span>
+          <h3 style="margin-bottom:var(--space-3);">A Beginner's Guide to Writing a Research Paper</h3>
+          <p style="color:var(--text-secondary);max-width:600px;line-height:1.7;">Writing your first research paper is daunting. After struggling through my own, I put together this guide to help fellow UIU students navigate the whole process…</p>
+          <div style="display:flex;align-items:center;gap:var(--space-4);margin-top:var(--space-5);flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:var(--space-2);">
+              <div class="avatar-placeholder avatar-sm accent" style="width:32px;height:32px;">RA</div>
+              <div><div style="font-weight:600;font-size:.875rem;">Rafsan Ahmed</div><div style="font-size:.72rem;color:var(--text-muted);">CSE · Apr 10</div></div>
+            </div>
+            <div style="display:flex;gap:var(--space-4);font-size:.8rem;color:var(--text-muted);">
+              <span> 201 likes</span><span> 43 comments</span><span> 10 min read</span>
+            </div>
+            <a href="post.html" class="btn btn-primary btn-sm">Read More →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Blog grid -->
+      <div class="grid-3" id="blogGrid"></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Write Blog Modal -->
+<div class="modal-overlay" id="writeBlogModal">
+  <div class="modal modal-lg">
+    <div class="modal-header"><div class="modal-title"> Write Blog Post</div><span class="modal-close" data-modal-close="writeBlogModal">&times;</span></div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-5);">
+      <div class="form-group"><label class="form-label">Title</label><input class="form-input" placeholder="An engaging title for your post"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);">
+        <div class="form-group"><label class="form-label">Category</label><select class="form-input"><option>Research Summary</option><option>Tutorial</option><option>Opinion</option><option>News</option></select></div>
+        <div class="form-group"><label class="form-label">Tags</label><input class="form-input" placeholder="e.g. AI, Machine Learning, Python"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Content</label><textarea class="form-input" style="min-height:160px;" placeholder="Write your blog post content here…"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-modal-close="writeBlogModal">Save Draft</button>
+      <button class="btn btn-primary" onclick="Modal.close('writeBlogModal');Toast.show('Blog post published! ','success')">Publish →</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+document.getElementById('sidebarMount').outerHTML = buildSidebar('blog');
+document.getElementById('topbarMount').outerHTML  = buildTopbar('Blog','blog');
+
+const gradients = [
+  'linear-gradient(135deg,var(--accent),var(--purple))',
+  'linear-gradient(135deg,var(--purple),var(--teal))',
+  'linear-gradient(135deg,var(--teal),var(--green))',
+  'linear-gradient(135deg,var(--orange),var(--red))',
+  'linear-gradient(135deg,var(--green),var(--accent))',
+];
+const blogIcons = {
+  'Research Summary': `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" width="44" height="44" style="opacity:0.95;"><path d="M9 3h6M10 3v6l-4 10a1 1 0 0 0 .9 1.4h10.2A1 1 0 0 0 18 19L14 9V3"/><path d="M7.5 14h9"/></svg>`,
+  'Tutorial': `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" width="44" height="44" style="opacity:0.95;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+  'Opinion': `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" width="44" height="44" style="opacity:0.95;"><path d="M9 21h6"/><path d="M9 17h6"/><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/></svg>`,
+  'default': `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" width="44" height="44" style="opacity:0.95;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`
+};
+
+function renderBlogs(list) {
+  const grid = document.getElementById('blogGrid');
+  grid.innerHTML='';
+  list.forEach((b,i)=>{
+    const s=DATA.getStudent(b.author);
+    const icon = blogIcons[b.category] || blogIcons['default'];
+    grid.innerHTML+=`
+    <div class="blog-card reveal delay-${i%4}">
+      <div class="blog-card-img" style="background:${gradients[i%gradients.length]};">${icon}</div>
+      <div class="blog-card-body">
+        <span class="badge badge-purple">${b.category}</span>
+        <div class="blog-title">${b.title}</div>
+        <div class="blog-excerpt">${b.excerpt}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">${b.tags.slice(0,3).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+        <div class="blog-meta">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="avatar-placeholder" style="width:22px;height:22px;font-size:.55rem;border-radius:50%;background:var(--accent-glow);color:var(--accent);">${s.initials}</div>
+            ${s.name.split(' ')[0]}
+          </div>
+          <span>${b.date}</span><span> ${b.readTime}</span>
+        </div>
+        <div class="blog-actions">
+          <button class="like-btn" onclick="this.classList.toggle('liked');this.querySelector('span').textContent=this.classList.contains('liked')?${b.likes+1}:${b.likes}"> <span>${b.likes}</span></button>
+          <span style="font-size:.8rem;color:var(--text-muted);"> ${b.comments}</span>
+          <a href="post.html" class="btn btn-ghost btn-sm" style="margin-left:auto;">Read →</a>
+        </div>
+      </div>
+    </div>`;
+  });
+  ScrollReveal.init();
+}
+
+renderBlogs(DATA.blogs.slice(1));
+
+document.querySelectorAll('.tab-item').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    const t=tab.dataset.tab;
+    renderBlogs(t==='all'?DATA.blogs.slice(1):DATA.blogs.slice(1).filter(b=>b.category===t));
+  });
+});
+
+document.getElementById('blogSearch').addEventListener('input',function(){
+  const q=this.value.toLowerCase();
+  renderBlogs(DATA.blogs.slice(1).filter(b=>b.title.toLowerCase().includes(q)||b.excerpt.toLowerCase().includes(q)));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile — UIU Research Portal</title>
+<link rel="stylesheet" href="../assets/css/global.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<style>
+.profile-cover { height:200px;background:linear-gradient(135deg,var(--primary) 0%,#1a2080 40%,#2d1b69 100%);border-radius:var(--radius-xl);position:relative;overflow:hidden;margin-bottom:80px; }
+.profile-cover::before { content:'';position:absolute;top:-30%;right:-5%;width:400px;height:400px;background:radial-gradient(circle,rgba(79,142,247,.2) 0%,transparent 70%); }
+.profile-avatar-wrap { position:absolute;bottom:-56px;left:var(--space-8);display:flex;align-items:flex-end;gap:var(--space-4); }
+.profile-avatar { width:112px;height:112px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:2.5rem;color:#fff;border:4px solid var(--bg-base);box-shadow:var(--shadow-lg); }
+.profile-header-info { padding-bottom:8px; }
+.profile-header-info h3 { margin-bottom:4px; }
+
+.profile-grid { display:grid;grid-template-columns:320px 1fr;gap:var(--space-6); }
+@media(max-width:1000px){.profile-grid{grid-template-columns:1fr;}}
+
+.skill-cloud { display:flex;flex-wrap:wrap;gap:8px; }
+.badge-grid  { display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:var(--space-3); }
+.badge-item  { background:var(--bg-surface);border:1px solid var(--border-card);border-radius:var(--radius-md);padding:var(--space-4);text-align:center;transition:all var(--dur-mid); }
+.badge-item.earned { border-color:var(--border-hover);background:var(--bg-card); }
+.badge-item:hover  { transform:translateY(-2px); }
+.badge-item.locked { opacity:.45;filter:grayscale(.5); }
+.badge-icon { font-size:2rem;margin-bottom:var(--space-2); }
+.badge-name { font-size:.78rem;font-weight:600; }
+
+/* Contribution heatmap */
+.heatmap { display:flex;gap:3px;flex-wrap:wrap; }
+.heatmap-cell { width:14px;height:14px;border-radius:3px;background:var(--bg-input);transition:all .1s; }
+.heatmap-cell[data-level="1"]{background:rgba(79,142,247,.25);}
+.heatmap-cell[data-level="2"]{background:rgba(79,142,247,.5);}
+.heatmap-cell[data-level="3"]{background:rgba(79,142,247,.75);}
+.heatmap-cell[data-level="4"]{background:var(--accent);}
+.heatmap-cell:hover { transform:scale(1.3); }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="app-shell">
+  <div id="sidebarMount"></div>
+  <div class="main-content">
+    <div id="topbarMount"></div>
+    <div class="page-content page-enter">
+
+      <!-- Cover + Avatar -->
+      <div class="profile-cover">
+        <div class="hero-bg-orb blue" style="opacity:.4;"></div>
+        <div class="profile-avatar-wrap">
+          <div class="profile-avatar">RA</div>
+          <div class="profile-header-info">
+            <h3 style="color:#fff;">Rafsan Ahmed</h3>
+            <div style="display:flex;gap:var(--space-3);align-items:center;flex-wrap:wrap;">
+              <span class="badge badge-accent"> Active Researcher</span>
+              <span style="font-size:.8rem;color:rgba(255,255,255,.6);">CSE · 3rd Year · Joined Sep 2022</span>
+            </div>
+          </div>
+        </div>
+        <div style="position:absolute;top:var(--space-5);right:var(--space-5);display:flex;gap:var(--space-3);">
+          <button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2);" onclick="Toast.show('Edit profile coming soon!','info')"> Edit Profile</button>
+        </div>
+      </div>
+
+      <div class="profile-grid">
+        <!-- Left sidebar -->
+        <div style="display:flex;flex-direction:column;gap:var(--space-5);">
+          <!-- Info card -->
+          <div class="card">
+            <div class="card-title mb-4"> About</div>
+            <p style="font-size:.875rem;color:var(--text-secondary);line-height:1.7;">Passionate about AI, machine learning, and healthcare applications. Looking for collaborative minds to build the future of medical AI!</p>
+            <div class="divider"></div>
+            <div style="display:flex;flex-direction:column;gap:var(--space-3);">
+              <div style="display:flex;align-items:center;gap:var(--space-3);font-size:.875rem;"><span></span><span style="color:var(--text-secondary);">Computer Science & Engineering</span></div>
+              <div style="display:flex;align-items:center;gap:var(--space-3);font-size:.875rem;"><span></span><span style="color:var(--text-secondary);">3rd Year Undergraduate</span></div>
+              <div style="display:flex;align-items:center;gap:var(--space-3);font-size:.875rem;"><span></span><span style="color:var(--text-secondary);">rafsan.ahmed@uiu.ac.bd</span></div>
+              <div style="display:flex;align-items:center;gap:var(--space-3);font-size:.875rem;"><span></span><span style="color:var(--accent);font-weight:600;">Rank #4 · 2,840 pts</span></div>
+            </div>
+          </div>
+
+          <!-- Skills -->
+          <div class="card">
+            <div class="card-title mb-4"> Skills</div>
+            <div class="skill-cloud">
+              <span class="tag active">Python</span><span class="tag active">Machine Learning</span><span class="tag active">TensorFlow</span><span class="tag active">React</span><span class="tag active">Data Analysis</span><span class="tag">PyTorch</span><span class="tag">OpenCV</span>
+            </div>
+          </div>
+
+          <!-- Interests -->
+          <div class="card">
+            <div class="card-title mb-4"> Research Interests</div>
+            <div class="skill-cloud">
+              <span class="tag active">AI in Healthcare</span><span class="tag active">Computer Vision</span><span class="tag active">NLP</span><span class="tag active">Edge Computing</span>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="card">
+            <div class="card-title mb-4"> Stats</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);">
+              <div style="text-align:center;padding:var(--space-3);background:var(--bg-surface);border-radius:var(--radius-md);"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;" data-count="7">0</div><div style="font-size:.7rem;color:var(--text-muted);">Projects Done</div></div>
+              <div style="text-align:center;padding:var(--space-3);background:var(--bg-surface);border-radius:var(--radius-md);"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;" data-count="134">0</div><div style="font-size:.7rem;color:var(--text-muted);">Contributions</div></div>
+              <div style="text-align:center;padding:var(--space-3);background:var(--bg-surface);border-radius:var(--radius-md);"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;" data-count="12">0</div><div style="font-size:.7rem;color:var(--text-muted);">Resources</div></div>
+              <div style="text-align:center;padding:var(--space-3);background:var(--bg-surface);border-radius:var(--radius-md);"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;" data-count="4">0</div><div style="font-size:.7rem;color:var(--text-muted);">Blog Posts</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right main -->
+        <div style="display:flex;flex-direction:column;gap:var(--space-5);">
+          <!-- Tabs -->
+          <div class="card" style="padding-bottom:0;">
+            <div class="tabs-line" data-tabs id="profileTabs">
+              <div class="tab-line-item active" data-tab="overview">Overview</div>
+              <div class="tab-line-item" data-tab="projects">Projects</div>
+              <div class="tab-line-item" data-tab="badges">Badges</div>
+              <div class="tab-line-item" data-tab="blogs">Blog Posts</div>
+            </div>
+          </div>
+
+          <!-- Overview -->
+          <div data-tab-panel="overview">
+            <!-- Recent projects -->
+            <div class="card mt-4">
+              <div class="card-header"><div class="card-title"> Recent Projects</div></div>
+              <div id="profileProjects"></div>
+            </div>
+          </div>
+
+          <!-- Projects tab -->
+          <div data-tab-panel="projects" style="display:none;">
+            <div class="card">
+              <div class="card-title mb-5">All Projects</div>
+              <div id="allProfileProjects"></div>
+            </div>
+          </div>
+
+          <!-- Badges tab -->
+          <div data-tab-panel="badges" style="display:none;">
+            <div class="card">
+              <div class="card-title mb-5"> Achievement Badges</div>
+              <div class="badge-grid" id="badgeGrid"></div>
+            </div>
+          </div>
+
+          <!-- Blog tab -->
+          <div data-tab-panel="blogs" style="display:none;">
+            <div class="card">
+              <div class="card-title mb-5"> Published Blog Posts</div>
+              <div id="profileBlogs"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="toast-container"></div>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/app.js"></script>
+<script>
+document.getElementById('sidebarMount').outerHTML = buildSidebar('profile');
+document.getElementById('topbarMount').outerHTML  = buildTopbar('My Profile','profile');
+Tabs.init('[data-tabs]');
+
+// Projects
+const pp = document.getElementById('profileProjects');
+const ap = document.getElementById('allProfileProjects');
+DATA.projects.forEach(p=>{
+  const html=`<div class="project-mini" onclick="window.location='../projects/workspace.html'" style="display:flex;align-items:center;gap:var(--space-4);padding:var(--space-4);border:1px solid var(--border-card);border-radius:var(--radius-md);margin-bottom:var(--space-3);cursor:pointer;transition:all var(--dur-fast);">
+    <div style="flex:1;">
+      <div style="font-weight:600;font-size:.9rem;">${p.title}</div>
+      <div style="font-size:.75rem;color:var(--text-muted);">${p.domain}</div>
+      <div class="progress-bar mt-2"><div class="progress-fill" style="width:${p.progress}%"></div></div>
+    </div>
+    <span class="badge badge-${p.status==='completed'?'green':'accent'}">${p.status}</span>
+  </div>`;
+  if(p.status==='active') pp.innerHTML+=html;
+  ap.innerHTML+=html;
+});
+
+// Badges
+const bg = document.getElementById('badgeGrid');
+DATA.badges.forEach(b=>{
+  bg.innerHTML+=`<div class="badge-item ${b.earned?'earned':'locked'}">
+    <div class="badge-icon">${b.icon}</div>
+    <div class="badge-name">${b.name}</div>
+    <div style="font-size:.7rem;color:var(--text-muted);margin-top:4px;">${b.desc}</div>
+    ${b.earned?`<span class="badge badge-${b.color} mt-2">Earned</span>`:`<span style="font-size:.7rem;color:var(--text-muted);margin-top:4px;display:block;">Locked</span>`}
+  </div>`;
+});
+
+// Blogs
+const pb = document.getElementById('profileBlogs');
+DATA.blogs.filter(b=>b.author===1).forEach(b=>{
+  pb.innerHTML+=`<div style="padding:var(--space-4);border:1px solid var(--border-card);border-radius:var(--radius-md);margin-bottom:var(--space-3);">
+    <div style="font-weight:600;margin-bottom:4px;">${b.title}</div>
+    <div style="font-size:.8rem;color:var(--text-muted);">${b.date} · ${b.readTime} read ·  ${b.likes} ·  ${b.comments}</div>
+  </div>`;
+});
+</script>
+</body>
+</html>
