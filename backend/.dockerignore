@@ -1,0 +1,10 @@
+vendor/
+.git/
+.env
+storage/logs/*.log
+storage/uploads/*
+!storage/uploads/.gitkeep
+tests/tmp/
+.phpunit.cache/
+.DS_Store
+Thumbs.db

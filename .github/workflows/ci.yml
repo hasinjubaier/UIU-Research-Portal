@@ -1,0 +1,59 @@
+name: Backend CI / CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    name: Run Unit & Integration Tests
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: uiu_research_portal
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping -h localhost -uroot -prootpassword" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP Environment
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo, pdo_mysql, mbstring, zip
+          coverage: none
+
+      - name: Validate composer.json
+        working-directory: backend
+        run: composer validate --strict
+
+      - name: Install Dependencies
+        working-directory: backend
+        run: composer install --prefer-dist --no-progress
+
+      - name: Prepare Environment File
+        working-directory: backend
+        run: |
+          cp .env.example .env
+          sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=rootpassword/' .env
+
+      - name: Run Database Migrations
+        working-directory: backend
+        run: php bin/migrate.php
+
+      - name: Seed Database
+        working-directory: backend
+        run: php bin/seed.php
+
+      - name: Execute Backend Test Suite
+        working-directory: backend
+        run: php tests/run_tests.php

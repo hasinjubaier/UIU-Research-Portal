@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: uiu_backend_api
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    environment:
+      APP_ENV: development
+      APP_DEBUG: "true"
+      APP_URL: "http://localhost:8000"
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: uiu_research_portal
+      DB_USERNAME: root
+      DB_PASSWORD: rootpassword
+      JWT_SECRET: super_secret_jwt_key_uiu_portal_2026_dev_mode
+      JWT_EXPIRATION: 86400
+      CORS_ALLOWED_ORIGINS: "*"
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    container_name: uiu_mysql_db
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: uiu_research_portal
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  websocket:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: uiu_websocket_server
+    restart: unless-stopped
+    command: php bin/websocket.php
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: uiu_research_portal
+      DB_USERNAME: root
+      DB_PASSWORD: rootpassword
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
+    driver: local

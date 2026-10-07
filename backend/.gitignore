@@ -1,0 +1,14 @@
+/vendor/
+/.env
+/storage/logs/*.log
+/storage/uploads/*
+!/storage/uploads/.gitkeep
+/storage/cache/*
+!/storage/cache/.gitkeep
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+composer.phar

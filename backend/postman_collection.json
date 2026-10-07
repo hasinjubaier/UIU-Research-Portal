@@ -1,0 +1,103 @@
+{
+  "info": {
+    "name": "UIU Research Portal API",
+    "_postman_id": "uiu-research-portal-api-v1",
+    "description": "Complete REST API collection for UIU Research Portal",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000/api", "type": "string" },
+    { "key": "token", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"rafsan.ahmed@uiu.ac.bd\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": "{{baseUrl}}/auth/login"
+      }
+    },
+    {
+      "name": "Auth - Current User",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/auth/me"
+      }
+    },
+    {
+      "name": "Projects - List",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/projects"
+      }
+    },
+    {
+      "name": "Projects - Kanban Tasks",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/projects/1/tasks"
+      }
+    },
+    {
+      "name": "Resources - List",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/resources"
+      }
+    },
+    {
+      "name": "Ideas - List",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/ideas"
+      }
+    },
+    {
+      "name": "Blog - List",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/blogs"
+      }
+    },
+    {
+      "name": "Leaderboard",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/users/leaderboard"
+      }
+    },
+    {
+      "name": "Dashboard - Summary",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/dashboard"
+      }
+    },
+    {
+      "name": "Global Search",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/search?q=AI",
+          "host": ["{{baseUrl}}"],
+          "path": ["search"],
+          "query": [{ "key": "q", "value": "AI" }]
+        }
+      }
+    }
+  ]
+}
