@@ -1,6 +1,7 @@
 {
   "name": "uiu/research-portal-backend",
   "description": "UIU Academic Research Collaboration Portal - Backend API",
+  "license": "MIT",
   "type": "project",
   "require": {
     "php": "^8.0",
