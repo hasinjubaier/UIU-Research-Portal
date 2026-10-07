@@ -77,6 +77,14 @@ class Validator
                 }
                 break;
 
+            case 'uiu_email':
+                if ($value !== null && $value !== '') {
+                    if (!filter_var($value, FILTER_VALIDATE_EMAIL) || !str_ends_with(strtolower($value), '@uiu.ac.bd')) {
+                        $this->addError($field, "The {$field} must be a valid UIU institutional email (@uiu.ac.bd).");
+                    }
+                }
+                break;
+
             case 'min':
                 $min = (int)($params[0] ?? 0);
                 if (is_string($value) && mb_strlen($value) < $min) {

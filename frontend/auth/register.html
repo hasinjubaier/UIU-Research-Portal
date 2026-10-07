@@ -228,6 +228,7 @@
 
 <div class="toast-container"></div>
 <script src="../assets/js/data.js"></script>
+<script src="../assets/js/api.js"></script>
 <script src="../assets/js/app.js"></script>
 <script>
 let skills = [], interests = [];
@@ -237,7 +238,7 @@ let current = 1;
 
 function goStep(n) {
   if (n === 2) {
-    const email = document.getElementById('regEmail').value;
+    const email = document.getElementById('regEmail').value.trim();
     if (!email.endsWith('@uiu.ac.bd')) { Toast.show('Please use your @uiu.ac.bd email', 'error'); return; }
   }
   steps[current].classList.remove('active');
@@ -270,15 +271,34 @@ function removeTag(val, btn, areaId) {
 function addSkill(e)   { if(e.key==='Enter'||e.key===','){ e.preventDefault(); addTag('skillsArea', skills, e.target.value); e.target.value=''; } }
 function addInterest(e){ if(e.key==='Enter'||e.key===','){ e.preventDefault(); addTag('interestsArea', interests, e.target.value); e.target.value=''; } }
 
-function handleRegister(e) {
+async function handleRegister(e) {
   e.preventDefault();
   const btn = document.getElementById('submitBtn');
   btn.innerHTML = '<span class="spinner"></span> Creating account…';
   btn.disabled = true;
-  setTimeout(() => {
-    Toast.show('Account created! Welcome to UIU Research Portal ', 'success');
-    setTimeout(() => { window.location.href = '../dashboard/index.html'; }, 1200);
-  }, 1500);
+
+  const payload = {
+    name: document.getElementById('fullname').value.trim(),
+    email: document.getElementById('regEmail').value.trim(),
+    password: document.getElementById('regPw').value,
+    department: document.getElementById('dept').value || 'CSE',
+    academic_year: document.getElementById('year').value || '1st Year',
+    bio: document.getElementById('bioInput')?.value?.trim() || '',
+    skills: skills,
+    interests: interests
+  };
+
+  try {
+    if (window.API && typeof window.API.register === 'function') {
+      await window.API.register(payload);
+    }
+    Toast.show('Account created! Welcome to UIU Research Portal', 'success');
+    setTimeout(() => { window.location.href = '../dashboard/index.html'; }, 500);
+  } catch (err) {
+    btn.innerHTML = 'Create Account';
+    btn.disabled = false;
+    Toast.show(err.message || 'Registration failed.', 'error');
+  }
 }
 </script>
 </body>

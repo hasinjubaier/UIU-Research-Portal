@@ -20,5 +20,10 @@
     "allow-plugins": {
       "php-http/discovery": false
     }
+  },
+  "scripts": {
+    "test": "php tests/run_tests.php",
+    "migrate": "php bin/migrate.php",
+    "seed": "php bin/seed.php"
   }
 }

@@ -23,7 +23,7 @@ class AuthController extends BaseController
 
         Validator::make($body, [
             'name'     => 'required|min:2',
-            'email'    => 'required|email',
+            'email'    => 'required|email|uiu_email',
             'password' => 'required|min:6',
         ])->validate();
 

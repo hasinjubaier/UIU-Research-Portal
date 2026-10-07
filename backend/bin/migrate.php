@@ -48,6 +48,9 @@ $stmt = $pdo->query("SELECT migration FROM migrations");
 $ranMigrations = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 $migrationFiles = glob(__DIR__ . '/../src/Database/migrations/*.php');
+if (empty($migrationFiles)) {
+    $migrationFiles = glob(__DIR__ . '/../../database/migrations/*.php');
+}
 sort($migrationFiles);
 
 if ($isRollback) {

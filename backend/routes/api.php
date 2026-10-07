@@ -38,7 +38,7 @@ return function (App $app) {
             $auth->post('/forgot-password', [AuthController::class, 'forgotPassword']);
             $auth->post('/reset-password', [AuthController::class, 'resetPassword']);
             $auth->get('/verify-email', [AuthController::class, 'verifyEmail']);
-            $auth->get('/me', [AuthController::class, 'me'])->add(new AuthMiddleware(true));
+            $auth->get('/me', [AuthController::class, 'me'])->add(new AuthMiddleware(false));
             $auth->post('/logout', [AuthController::class, 'logout']);
         });
 
@@ -79,7 +79,7 @@ return function (App $app) {
             $conv->get('/{id}/messages', [MessageController::class, 'getMessages']);
             $conv->post('/{id}/messages', [MessageController::class, 'sendMessage']);
             $conv->post('/{id}/read', [MessageController::class, 'markRead']);
-        })->add(new AuthMiddleware(true));
+        })->add(new AuthMiddleware(false));
 
         // ── Resources & Datasets ──
         $api->group('/resources', function (RouteCollectorProxy $resources) {
@@ -114,8 +114,8 @@ return function (App $app) {
         $api->get('/contributions/project/{projectId}', [ContributionController::class, 'getByProject']);
 
         // ── Reputation & Badges ──
-        $api->get('/reputation/breakdown', [ReputationController::class, 'getBreakdown'])->add(new AuthMiddleware(true));
-        $api->get('/badges', [ReputationController::class, 'getBadges'])->add(new AuthMiddleware(true));
+        $api->get('/reputation/breakdown', [ReputationController::class, 'getBreakdown'])->add(new AuthMiddleware(false));
+        $api->get('/badges', [ReputationController::class, 'getBadges']);
         $api->post('/badges/{badgeId}/award', [ReputationController::class, 'awardBadge'])->add(new AuthMiddleware(false));
 
         // ── Notifications ──
@@ -123,7 +123,7 @@ return function (App $app) {
             $notifs->get('', [NotificationController::class, 'list']);
             $notifs->patch('/{id}/read', [NotificationController::class, 'markRead']);
             $notifs->post('/read-all', [NotificationController::class, 'markAllRead']);
-        })->add(new AuthMiddleware(true));
+        })->add(new AuthMiddleware(false));
 
         // ── Events ──
         $api->group('/events', function (RouteCollectorProxy $events) {
@@ -136,10 +136,10 @@ return function (App $app) {
 
         // ── Collaborators ──
         $api->get('/collaborators', [CollaboratorController::class, 'list']);
-        $api->post('/collaborators/request', [CollaboratorController::class, 'request'])->add(new AuthMiddleware(true));
+        $api->post('/collaborators/request', [CollaboratorController::class, 'request'])->add(new AuthMiddleware(false));
 
         // ── Dashboard & Global Search ──
-        $api->get('/dashboard', [DashboardController::class, 'index'])->add(new AuthMiddleware(true));
+        $api->get('/dashboard', [DashboardController::class, 'index'])->add(new AuthMiddleware(false));
         $api->get('/search', [DashboardController::class, 'search']);
     });
 };

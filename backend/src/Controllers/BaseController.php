@@ -19,7 +19,7 @@ abstract class BaseController
 
     protected function getUserId(ServerRequestInterface $request): int
     {
-        return (int)($request->getAttribute('userId') ?? 1); // fallback to 1 in dev/unauthenticated
+        return (int)($request->getAttribute('userId') ?? 0);
     }
 
     protected function getUser(ServerRequestInterface $request): ?array

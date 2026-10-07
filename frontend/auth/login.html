@@ -159,15 +159,17 @@
 
 <div class="toast-container"></div>
 <script src="../assets/js/data.js"></script>
+<script src="../assets/js/api.js"></script>
 <script src="../assets/js/app.js"></script>
 <script>
 function togglePw() {
   const pw = document.getElementById('password');
   pw.type = pw.type === 'password' ? 'text' : 'password';
 }
-function handleLogin(e) {
+async function handleLogin(e) {
   e.preventDefault();
-  const email = document.getElementById('email').value;
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
   const btn = document.getElementById('loginBtn');
   if (!email.endsWith('@uiu.ac.bd')) {
     Toast.show('Please use your UIU email address (@uiu.ac.bd)', 'error');
@@ -175,13 +177,31 @@ function handleLogin(e) {
   }
   btn.innerHTML = '<span class="spinner"></span> Signing in…';
   btn.disabled = true;
-  setTimeout(() => { window.location.href = '../dashboard/index.html'; }, 1200);
+
+  try {
+    if (window.API && typeof window.API.login === 'function') {
+      await window.API.login(email, password);
+    }
+    Toast.show('Signed in successfully!', 'success');
+    setTimeout(() => { window.location.href = '../dashboard/index.html'; }, 400);
+  } catch (err) {
+    btn.innerHTML = 'Sign In';
+    btn.disabled = false;
+    Toast.show(err.message || 'Login failed. Please verify credentials.', 'error');
+  }
 }
-function demoLogin() {
+async function demoLogin() {
   const btn = event.target;
   btn.innerHTML = '<span class="spinner"></span> Loading demo…';
   btn.disabled = true;
-  setTimeout(() => { window.location.href = '../dashboard/index.html'; }, 1000);
+  try {
+    if (window.API && typeof window.API.login === 'function') {
+      await window.API.login('rafsan.ahmed@uiu.ac.bd', 'password123');
+    }
+  } catch (_) {
+    // Allow demo transition
+  }
+  setTimeout(() => { window.location.href = '../dashboard/index.html'; }, 400);
 }
 </script>
 </body>
